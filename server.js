@@ -8,6 +8,9 @@ var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
 
+var game = [undefined,undefined];
+var playerCount = 0;
+
 var app = express.createServer();
 app.use(express.static(__dirname));
 app.listen(8000);
@@ -26,3 +29,14 @@ socketconnection.sockets.on('run_up',function(socket){
 });
 
 /*TODO: auf client-anfragen reagieren ...*/
+socketconnection.sockets.on('run_down',function(socket){
+    console.log('running down...');
+});
+
+socketconnection.sockets.on('run_left',function(socket){
+    console.log('running left');
+});
+
+socketconnection.sockets.on('run_right',function(socket){
+   console.log('running right');
+});

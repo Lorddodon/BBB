@@ -1,8 +1,12 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
-    var socket = io.connect('http://localhost');
+    var socket = io.connect('http://localhost:8889');
     socket.on('news', function (data) {
         console.log(data);
         socket.emit('my other event', { my: 'data' });
+    });
+    socket.on('ping',function(data){
+       console.log(data);
+        socket.emit('pong',{data: 'hello world!'});
     });
 </script>
