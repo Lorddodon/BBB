@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Bomberman</title>
+</head>
+<body>
+<h1>Bomberman Client</h1>
+<script src="/node_modules/socket.io/lib/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost');
+    socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+    });
+</script>
+
+</body>
+</html>
