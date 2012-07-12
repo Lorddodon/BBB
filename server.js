@@ -68,7 +68,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.y -= 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',player);
+                broadCast('update',{player:player});
             }
         });
         socket.on('run_down',function(data){
@@ -78,7 +78,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.y += 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',player);
+                broadCast('update',{player:player});
             }
         });
         socket.on('run_left',function(data){
@@ -88,7 +88,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.x -= 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',player);
+                broadCast('update',{player:player});
             }
         });
         socket.on('run_right',function(data){
@@ -98,7 +98,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.x += 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',player);
+                broadCast('update',{player:player});
             }
         });
         socket.on('drop_bomb',function(data){
@@ -119,10 +119,18 @@ socketconnection.sockets.on('connection', function (socket) {
                     /*TODO: prüfe welche objekte gelöscht werden müssen*/
                     var objects = [];
                     for(var i = bomb.x-bombRadius; i < bombRadius+bomb.x; i++) {
-
+                        var currField = field.getNode(i,bomb.y);
+                        if(currField && currField.containedEntity) {
+                            objects.push(currField.containedEntity);
+                            currField.containedEntity = null;
+                        }
                     }
                     for(var j = bomb.y-bombRadius; j < bombRadius+bomb.y; i++) {
-
+                        var currField = field.getNode(bomb.x,j);
+                        if(currField && currField.containedEntity) {
+                            objects.push(currField.containedEntity);
+                            currField.containedEntity = null;
+                        }
                     }
 
                     player.currentBombCount--;
