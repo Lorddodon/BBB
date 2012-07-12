@@ -153,6 +153,12 @@ function drawBackgroundGrid() {
             context.stroke();
         }
     }
+    for(var i = 1; i < graph.width; i+=2) {
+        for(var j = 1; j < graph.height; j+=2) {
+            context.fillRect(i*30,j*30,30,30);
+            context.stroke();
+        }
+    }
 }
 
 function drawPicture(index,xpos,ypos,xposold,yposold)
