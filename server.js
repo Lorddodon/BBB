@@ -114,25 +114,35 @@ socketconnection.sockets.on('connection', function (socket) {
                     broadCast('show_flame',{id:bomb.id});
                 },2500);
                 setTimeout(function(){
-                    /*TODO: prüfe welche objekte gelöscht werden müssen*/
+                    /*TODO: prüfe wenn explosion bombe trifft dann erneute explosion ausführen*/
                     var objects = [];
+                    var died_players = [];
                     for(var i = bomb.x-bombRadius; i < bombRadius+bomb.x; i++) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField && currField.containedEntity) {
-                            objects.push(currField.containedEntity);
+                            if(currField.containedEntity.type === 'player'){
+                                died_players.push(objects);
+                            } else {
+                                objects.push(currField.containedEntity);
+                            }
                             currField.containedEntity = null;
                         }
                     }
                     for(var j = bomb.y-bombRadius; j < bombRadius+bomb.y; i++) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField && currField.containedEntity) {
-                            objects.push(currField.containedEntity);
+                            if(currField.containedEntity.type === 'player'){
+                                died_players.push(objects);
+                            } else {
+                                objects.push(currField.containedEntity);
+                            }
                             currField.containedEntity = null;
                         }
                     }
 
                     player.currentBombCount--;
                     broadCast('bomb_explode',{id:bomb.id});
+                    broadCast('player_died',{players:died_players});
                     broadCast('delete_entities',{delete_array:objects});
                 },3000);
             }
