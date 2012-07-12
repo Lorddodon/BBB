@@ -18,42 +18,45 @@ var field = function createField(fieldWidth, fieldHeight) {
         },
 
         createNodeIfUndefined : function(x, y) {
-        var node = this.getNode(x, y);
-        if(node == null)
-            node = new nodeFactory.Node(x, y);
-        return node;
+            var node = this.getNode(x, y);
+            if(typeof node === "undefined")
+                node = new nodeFactory.Node(x, y);
+            return node;
         },
 
+        /*TODO: test schreiben*/
         connect : function() {
-        for(var y = 0; y < fieldHeight; y++)
-            for(var x = 0; x < fieldWidth; x++) {
-                if(y%2 == 0 || x%2 == 0) {
-                    var currentNode = this.createNodeIfUndefined(x, y);
-                    if(x%2 == 1) {
-                        if(currentNode.left == null)
-                            currentNode.left = this.createNodeIfUndefined(x - 1, y);
-                        if(currentNode.right == null)
-                            currentNode.right = this.createNodeIfUndefined(x + 1, y);
+            var x;
+            var y;
+            for(var y = 0; y < fieldHeight; y++)
+                for(var x = 0; x < fieldWidth; x++) {
+                    if(y%2 == 0 || x%2 == 0) {
+                        var currentNode = this.createNodeIfUndefined(x, y);
+                        if(x%2 == 1) {
+                            if(currentNode.left == null)
+                                currentNode.left = this.createNodeIfUndefined(x - 1, y);
+                            if(currentNode.right == null)
+                                currentNode.right = this.createNodeIfUndefined(x + 1, y);
+                        }
+                        else if(y%2 == 1) {
+                            if(currentNode.above == null)
+                                currentNode.above = this.createNodeIfUndefined(x, y - 1);
+                            if(currentNode.below == null)
+                                currentNode.below = this.createNodeIfUndefined(x, y + 1);
+                        }
+                        else {
+                            if(y > 0 && currentNode.above == null)
+                                currentNode.above = this.createNodeIfUndefined(x, y - 1);
+                            if(y < this.height - 1 && currentNode.below == null)
+                                currentNode.below = this.createNodeIfUndefined(x, y + 1);
+                            if(x > 0 && currentNode.left == null)
+                                currentNode.left = this.createNodeIfUndefined(x - 1, y);
+                            if(x < this.width - 1 && currentNode.right == null)
+                                currentNode.right = this.createNodeIfUndefined(x + 1, y);
+                        }
+                        this.addNode(currentNode);
                     }
-                    else if(y%2 == 1) {
-                        if(currentNode.above == null)
-                            currentNode.above = this.createNodeIfUndefined(x, y - 1);
-                        if(currentNode.below == null)
-                            currentNode.below = this.createNodeIfUndefined(x, y + 1);
-                    }
-                    else {
-                        if(y > 0 && currentNode.above == null)
-                            currentNode.above = this.createNodeIfUndefined(x, y - 1);
-                        if(y < this.height - 1 && currentNode.below == null)
-                            currentNode.below = this.createNodeIfUndefined(x, y + 1);
-                        if(x > 0 && currentNode.left == null)
-                            currentNode.left = this.createNodeIfUndefined(x - 1, y);
-                        if(x < this.width - 1 && currentNode.right == null)
-                            currentNode.right = this.createNodeIfUndefined(x + 1, y);
-                    }
-                    this.addNode(currentNode);
                 }
-            }
         }
     };
 };

@@ -16,7 +16,7 @@ socket.on('news', function (data) {
 
 socket.on('identity', function(data){
     console.log('identity called')
-    player = data['player'];
+    player = data['entity'];
     console.log(player);
 })
 

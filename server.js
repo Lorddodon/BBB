@@ -17,7 +17,7 @@ bombs = [];
 var field = require('./graph/Field').Field(9,9);
 field.connect();
 
-var playerFactory = require('./entity/Player');
+var entityFactory = require('./entity/Entity');
 
 var playerCount = 0;
 
@@ -48,15 +48,15 @@ function broadCast(command, data) {
 socketconnection.sockets.on('connection', function (socket) {
     if(clientNumber < 2) {
         if(clientNumber){
-            var player = playerFactory.player(8,8,clientNumber);
+            var player = entityFactory.entity(8,8,clientNumber, "player");
             field.getNode(8,8).containedEntity = player; /*new player*/;
-            socket.emit('identity',{player:player});
+            socket.emit('identity',{entity:player});
             player.currentBombCount = 0;
             players[clientNumber] = player;
         } else {
-            var player = playerFactory.player(0,0,clientNumber);
+            var player = entityFactory.entity(0,0,clientNumber, "player");
             field.getNode(0,0).containedEntity = player; /*new player*/;
-            socket.emit('identity',{player:player});
+            socket.emit('identity',{entity:player});
             player.currentBombCount = 0;
             players[clientNumber] = player;
         }
@@ -70,7 +70,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.y -= 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{player:player});
+                broadCast('update',{entity:player});
             }
         });
         socket.on('run_down',function(data){
@@ -80,7 +80,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.y += 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{player:player});
+                broadCast('update',{entity:player});
             }
         });
         socket.on('run_left',function(data){
@@ -90,7 +90,7 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.x -= 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{player:player});
+                broadCast('update',{entity:player});
             }
         });
         socket.on('run_right',function(data){
@@ -100,18 +100,14 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x,player.y).containedEntity = null;
                 player.x += 1;
                 field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{player:player});
+                broadCast('update',{entity:player});
             }
         });
         socket.on('drop_bomb',function(data){
             var player = players[data['id']];
             if(player.currentBombCount < maxBombCount) {
                 player.currentBombCount++;
-                var bomb = {x:player.x ,
-                    y:player.y ,
-                    id: bombId++,
-                    playerId:player.id
-                };
+                var bomb = entityFactory.entity(player.x, player.y, bombId++, 'bomb');
                 bombs.push(bomb.id);
                 broadCast('bomb_placed',bomb);
                 setTimeout(function(){
