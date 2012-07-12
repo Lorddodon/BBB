@@ -11,7 +11,7 @@ var field = function createField(fieldWidth, fieldHeight) {
         },
 
         getNode : function (x, y) {
-            if(x < 0 || y < 0)
+            if(x < 0 || x >= fieldWidth || y < 0 || y >= fieldHeight)
                 return null;
             else
                 return this.nodes[y * fieldHeight + x];
