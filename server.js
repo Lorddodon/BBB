@@ -18,7 +18,7 @@ bombs = [];
 
 var field = require('./graph/Field').Field(9,9);
 field.connect();
-generator.generate(field, 25);
+//generator.generate(field, 25);
 
 var entityFactory = require('./entity/Entity');
 

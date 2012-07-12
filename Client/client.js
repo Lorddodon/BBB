@@ -8,6 +8,7 @@
 
 var socket = io.connect('http://localhost:8000');
 var player = undefined;
+var otherplayer = undefined;
 var graph = undefined;
 
 socket.on('graph', function(data){
@@ -23,9 +24,30 @@ socket.on('identity', function(data){
 })
 
 socket.on('update',function(data){
-    console.log(data);
-    player = data['player'];
-    console.log(player.xpos);
+    console.log(player);
+    console.log(otherplayer);
+    console.log("Player should be " + data);
+
+    if(player.id = data.entity.id){
+        console.log('got current player id');
+        var tmpx=player.x;
+        var tmpy=player.y;
+        player = data['entity'];
+        drawPicture(0,player.x,player.y,tmpx,tmpy);
+    }else{
+        console.log('got other player id');
+        if(otherplayer){
+        var tmpx=otherplayer.x;
+        var tmpy=otherplayer.y;
+    }
+        otherplayer = data['entity'];
+        drawPicture(0,otherplayer.x,otherplayer.y,tmpx,tmpy);
+    }
+
+
+
+
+    console.log(player.x);
 
 });
 
@@ -59,7 +81,7 @@ Mousetrap.bind('down', function() {
     console.log("run_down")
 });
 Mousetrap.bind('space', function() {
-    socket.emit("drop_bomb")
+    socket.emit("drop_bomb",{id:player.id})
     console.log("drop_bomb")
 });
 
@@ -72,12 +94,12 @@ function drawPicture(index,xpos,ypos,xposold,yposold)
     image.onload = function() {
         width = image.width;
         height = image.height;
-        canvas = document.getElementById("canvas");
+        canvas = document.getElementById("myCanvas");
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
         context.clearRect(xposold*mul, yposold*mul, canvas.width, canvas.height);
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, xpos*mul, frameSize, frameSize);
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
     }
 }
 
