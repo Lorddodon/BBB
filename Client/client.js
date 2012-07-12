@@ -8,10 +8,12 @@
 
 var socket = io.connect('http://localhost:8000');
 var player = undefined;
+var graph = undefined;
 
-socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('my other event', { my: 'data' });
+socket.on('graph', function(data){
+    console.log('graph received..');
+    graph = data['graph'];
+    /*TODO: zeichne Feld nach graphen*/
 });
 
 socket.on('identity', function(data){
@@ -22,6 +24,16 @@ socket.on('identity', function(data){
 
 socket.on('update',function(data){
    console.log(data);
+});
+
+socket.on('show_flame',function(data){
+   console.log('show the animation..');
+    /*TODO: implement this*/
+});
+
+socket.on('bomb_placed',function(data){
+    /*TODO: zeichne an position eine bombe*/
+    var bomb = data['bomb'];
 });
 
 Mousetrap.bind('right', function() {

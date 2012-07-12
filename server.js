@@ -7,6 +7,7 @@
 var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
+var utils = require('utils');
 
 maxBombCount = 2;
 bombRadius = 3;
@@ -16,6 +17,7 @@ bombs = [];
 
 var field = require('./graph/Field').Field(9,9);
 field.connect();
+/*TODO: generator*/
 
 var entityFactory = require('./entity/Entity');
 
@@ -47,6 +49,7 @@ function broadCast(command, data) {
 
 socketconnection.sockets.on('connection', function (socket) {
     if(clientNumber < 2) {
+        socket.emit('graph',{graph:field});
         if(clientNumber){
             var player = entityFactory.entity(8,8,clientNumber, "player");
             field.getNode(8,8).containedEntity = player; /*new player*/;
@@ -109,12 +112,22 @@ socketconnection.sockets.on('connection', function (socket) {
                 player.currentBombCount++;
                 var bomb = entityFactory.entity(player.x, player.y, bombId++, 'bomb');
                 bombs.push(bomb.id);
-                broadCast('bomb_placed',bomb);
+                broadCast('bomb_placed',{bomb:bomb});
                 setTimeout(function(){
                     broadCast('show_flame',{id:bomb.id});
                 },2500);
                 setTimeout(function(){
                     /*TODO: prüfe welche objekte gelöscht werden müssen*/
+                    var bombIndex = -1;
+                    for (var searchIndex = 0; i < bombs.length; searchIndex++) {
+                        if(bombs[searchIndex].id == bomb.id){
+                            bombIndex = searchIndex;
+                            break;
+                        }
+                    }
+                    if(bombIndex > -1)
+                        utils.remove(bombs,bombIndex);
+
                     var objects = [];
                     var died_players = [];
                     for(var i = bomb.x; i >= bomb.x-bombRadius; i--) {
