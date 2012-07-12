@@ -7,7 +7,7 @@
 var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
-var utils = require('utils');
+var utils = require('util');
 var generator = require('./graph/Generator');
 
 maxBombCount = 2;
@@ -153,7 +153,7 @@ socketconnection.sockets.on('connection', function (socket) {
                             break;
                         }
                     }
-                    for(var j = bomb.y; j >= bomb.y-bombRadius; j++) {
+                    for(var j = bomb.y; j >= bomb.y-bombRadius; j--) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField && currField.containedEntity) {
                             if(currField.containedEntity.type == 'player')
@@ -164,7 +164,7 @@ socketconnection.sockets.on('connection', function (socket) {
                             break;
                         }
                     }
-                    for(var j = bomb.y; j <= bomb.y+bombRadius; i++) {
+                    for(var j = bomb.y; j <= bomb.y+bombRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField && currField.containedEntity) {
                             if(currField.containedEntity.type == 'player')
@@ -178,6 +178,7 @@ socketconnection.sockets.on('connection', function (socket) {
 
                     player.currentBombCount--;
                     broadCast('bomb_explode',{id:bomb.id});
+                    broadCast('players_died',{players:died_players});
                     broadCast('delete_entities',{delete_array:objects});
                 },3000);
             }
