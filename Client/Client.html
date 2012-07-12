@@ -1,12 +1,15 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
 <script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io.connect('http://localhost:8889');
-    socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
-    });
-    socket.on('ping',function(data){
-       console.log(data);
-        socket.emit('pong',{data: 'hello world!'});
-    });
-</script>
+<script type="text/javascript" src="/Client/mousetrap.min.js"></script>
+
+<html>
+<head>
+    <title>Bomberman</title>
+</head>
+<body>
+<h1>Welcome to Bomberman</h1>
+<script type="text/javascript" src="/Client/client.js"></script>
+
+</body>
+</html>
