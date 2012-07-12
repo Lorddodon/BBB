@@ -140,7 +140,8 @@ socketconnection.sockets.on('connection', function (socket) {
                                 objects.push(currField.containedEntity);
                             currField.containedEntity = null;
                             break;
-                        }
+                        } else
+                            break;
                     }
                     for(var i = bomb.x; i <= bomb.x+bombRadius; i++) {
                         var currField = field.getNode(i,bomb.y);
@@ -151,7 +152,8 @@ socketconnection.sockets.on('connection', function (socket) {
                                 objects.push(currField.containedEntity);
                             currField.containedEntity = null;
                             break;
-                        }
+                        } else
+                            break;
                     }
                     for(var j = bomb.y; j >= bomb.y-bombRadius; j--) {
                         var currField = field.getNode(bomb.x,j);
@@ -162,7 +164,8 @@ socketconnection.sockets.on('connection', function (socket) {
                                 objects.push(currField.containedEntity);
                             currField.containedEntity = null;
                             break;
-                        }
+                        } else
+                            break;
                     }
                     for(var j = bomb.y; j <= bomb.y+bombRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
@@ -173,7 +176,8 @@ socketconnection.sockets.on('connection', function (socket) {
                                 objects.push(currField.containedEntity);
                             currField.containedEntity = null;
                             break;
-                        }
+                        } else
+                            break;
                     }
 
                     player.currentBombCount--;
