@@ -18,6 +18,7 @@ socket.on('graph', function(data){
     graph = data['graph'];
     /*TODO: zeichne Feld nach graphen*/
     drawBackgroundGrid();
+    drawObstacles();
 });
 
 socket.on('identity', function(data){
@@ -73,19 +74,25 @@ socket.on('bomb_explode',function(data){
     };
     var index = -1;
     for(var i = 0; i < bombs.length; i++) {
-        if(bombs[i].id == data['id']) {
+        if(bombs[i].id == data.bomb.id) {
             index = i;
             break;
         }
     }
-    var bomb = bombs[index];
+    var bomb = data.bomb;
     if(index > -1)
         remove(bombs,index);
     removeBomb(bomb.x,bomb.y);
+
 });
 
 socket.on('delete_entities',function(data){
-
+    var delete_array = data.delete_array;
+    for(var i = 0; i < delete_array.length; i++) {
+        if(delete_array[i].type === 'obstacle') {
+            removeObstacle(delete_array[i].x,delete_array[i].y);
+        }
+    }
 });
 
 socket.on('players_died',function(data){
@@ -145,7 +152,6 @@ function drawBackgroundGrid() {
     canvas = document.getElementById("background");
     context = canvas.getContext("2d");
     var fieldAspect = 30;
-    var numberFields = graph.width;
     for(var i = 0; i <= graph.width*fieldAspect; i+=fieldAspect) {
             context.moveTo(i,0);
             context.lineTo(i,graph.width*fieldAspect);
@@ -159,6 +165,42 @@ function drawBackgroundGrid() {
         for(var j = 1; j < graph.height; j+=2) {
             context.fillRect(i*fieldAspect,j*fieldAspect,fieldAspect,fieldAspect);
             context.stroke();
+        }
+    }
+}
+
+function removeObstacle(xpos, ypos) {
+    var canvas, context;
+    var mul = 30;
+    canvas = document.getElementById("obstacles");
+    context = canvas.getContext("2d");
+    context.clearRect(xpos*mul+4, ypos*mul+4, 30, 30);
+}
+
+function drawObstacles() {
+    var index = 35;
+    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
+    var mul = 30;
+    image = new Image();
+    image.src = "./spritesheet.png";
+    image.onload = function() {
+        function drawObstacle(xpos, ypos) {
+            width = image.width;
+            height = image.height;
+            canvas = document.getElementById("obstacles");
+            y = (index-(index%numFrames))/numFrames*frameSize;
+            x = (index%numFrames)*frameSize;
+            context = canvas.getContext("2d");
+            context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
+        }
+        for(var i = 0; i < graph.height; i++) {
+            for (var j = 0; j < graph.width; j++) {
+                if(graph.nodes[i*graph.height+j] && graph.nodes[i*graph.height+j].containedEntity) {
+                    if(graph.nodes[i*graph.height+j].containedEntity.type === 'obstacle') {
+                        drawObstacle(i,j);
+                    }
+                }
+            }
         }
     }
 }

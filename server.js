@@ -18,7 +18,7 @@ bombs = [];
 
 var field = require('./graph/Field').Field(9,9);
 field.connect();
-//generator.generate(field, 25);
+generator.generate(field, 25);
 
 var entityFactory = require('./entity/Entity');
 
@@ -177,7 +177,7 @@ socketconnection.sockets.on('connection', function (socket) {
                     }
 
                     player.currentBombCount--;
-                    broadCast('bomb_explode',{id:bomb.id});
+                    broadCast('bomb_explode',{bomb:bomb});
                     broadCast('players_died',{players:died_players});
                     broadCast('delete_entities',{delete_array:objects});
                 },3000);
