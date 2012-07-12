@@ -133,49 +133,57 @@ socketconnection.sockets.on('connection', function (socket) {
                     var died_players = [];
                     for(var i = bomb.x; i >= bomb.x-bombRadius; i--) {
                         var currField = field.getNode(i,bomb.y);
-                        if(currField && currField.containedEntity) {
-                            if(currField.containedEntity.type == 'player')
-                                died_players.push(currField.containedEntity);
-                            else
-                                objects.push(currField.containedEntity);
-                            currField.containedEntity = null;
-                            break;
+                        if(currField ) {
+                            if( currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player')
+                                    died_players.push(currField.containedEntity);
+                                else
+                                    objects.push(currField.containedEntity);
+                                currField.containedEntity = null;
+                                break;
+                            }
                         } else
                             break;
                     }
                     for(var i = bomb.x; i <= bomb.x+bombRadius; i++) {
                         var currField = field.getNode(i,bomb.y);
-                        if(currField && currField.containedEntity) {
-                            if(currField.containedEntity.type == 'player')
-                                died_players.push(currField.containedEntity);
-                            else
-                                objects.push(currField.containedEntity);
-                            currField.containedEntity = null;
-                            break;
+                        if(currField ) {
+                            if (currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player')
+                                    died_players.push(currField.containedEntity);
+                                else
+                                    objects.push(currField.containedEntity);
+                                currField.containedEntity = null;
+                                break;
+                            }
                         } else
                             break;
                     }
                     for(var j = bomb.y; j >= bomb.y-bombRadius; j--) {
                         var currField = field.getNode(bomb.x,j);
-                        if(currField && currField.containedEntity) {
-                            if(currField.containedEntity.type == 'player')
-                                died_players.push(currField.containedEntity);
-                            else
-                                objects.push(currField.containedEntity);
-                            currField.containedEntity = null;
-                            break;
+                        if(currField) {
+                            if (currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player')
+                                    died_players.push(currField.containedEntity);
+                                else
+                                    objects.push(currField.containedEntity);
+                                currField.containedEntity = null;
+                                break;
+                            }
                         } else
                             break;
                     }
                     for(var j = bomb.y; j <= bomb.y+bombRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
-                        if(currField && currField.containedEntity) {
-                            if(currField.containedEntity.type == 'player')
-                                died_players.push(currField.containedEntity);
-                            else
-                                objects.push(currField.containedEntity);
-                            currField.containedEntity = null;
-                            break;
+                        if(currField) {
+                            if(currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player')
+                                    died_players.push(currField.containedEntity);
+                                else
+                                    objects.push(currField.containedEntity);
+                                currField.containedEntity = null;
+                                break;
+                            }
                         } else
                             break;
                     }
