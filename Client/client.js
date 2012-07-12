@@ -144,18 +144,20 @@ function drawBackgroundGrid() {
     var canvas, context;
     canvas = document.getElementById("background");
     context = canvas.getContext("2d");
-    for(var i = 0; i <= 270; i+=30) {
-        if(i % 30 == 0) {
+    var fieldAspect = 30;
+    var numberFields = graph.width;
+    for(var i = 0; i <= graph.width*fieldAspect; i+=fieldAspect) {
             context.moveTo(i,0);
-            context.lineTo(i,270);
-            context.moveTo(0,i);
-            context.lineTo(270,i);
-            context.stroke();
-        }
+            context.lineTo(i,graph.width*fieldAspect);
     }
+    for(var j = 0; j <= graph.height*fieldAspect;j+=fieldAspect) {
+        context.moveTo(0,j);
+        context.lineTo(graph.width*fieldAspect,j);
+    }
+    context.stroke();
     for(var i = 1; i < graph.width; i+=2) {
         for(var j = 1; j < graph.height; j+=2) {
-            context.fillRect(i*30,j*30,30,30);
+            context.fillRect(i*fieldAspect,j*fieldAspect,fieldAspect,fieldAspect);
             context.stroke();
         }
     }
