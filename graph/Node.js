@@ -5,7 +5,12 @@ var node = function createNode(xCoord, yCoord) {
         above : null,
         right : null,
         below : null,
-        left : null
+        left : null,
+        containedEntity : null,
+
+        place : function(entity) {
+            this.containedEntity = entity;
+        }
     };
 };
 

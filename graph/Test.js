@@ -1,7 +1,6 @@
 var nodeFactory = require('./Node');
 var fieldFactory = require('./Field');
 
-var field = new fieldFactory.Field(9, 9);
-var elapsed = Date.now();
+var field = fieldFactory.Field(9, 9);
 field.connect();
 console.log(field);
