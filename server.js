@@ -8,7 +8,7 @@ var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
 var utils = require('utils');
-var generator = requre('graph/Generator');
+var generator = require('./graph/Generator');
 
 maxBombCount = 2;
 bombRadius = 3;

@@ -23,7 +23,10 @@ socket.on('identity', function(data){
 })
 
 socket.on('update',function(data){
-   console.log(data);
+    console.log(data);
+    player = data['player'];
+    console.log(player.xpos);
+
 });
 
 socket.on('show_flame',function(data){
@@ -59,3 +62,22 @@ Mousetrap.bind('space', function() {
     socket.emit("drop_bomb")
     console.log("drop_bomb")
 });
+
+function drawPicture(index,xpos,ypos,xposold,yposold)
+{
+    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
+    var mul = 30;
+    image = new Image();
+    image.src = "./spritesheet.png";
+    image.onload = function() {
+        width = image.width;
+        height = image.height;
+        canvas = document.getElementById("canvas");
+        y = (index-(index%numFrames))/numFrames*frameSize;
+        x = (index%numFrames)*frameSize;
+        context = canvas.getContext("2d");
+        context.clearRect(xposold*mul, yposold*mul, canvas.width, canvas.height);
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, xpos*mul, frameSize, frameSize);
+    }
+}
+
