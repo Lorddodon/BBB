@@ -8,6 +8,7 @@ var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
 var utils = require('utils');
+var generator = requre('graph/Generator');
 
 maxBombCount = 2;
 bombRadius = 3;
@@ -17,7 +18,7 @@ bombs = [];
 
 var field = require('./graph/Field').Field(9,9);
 field.connect();
-/*TODO: generator*/
+generator.generate(field, 25);
 
 var entityFactory = require('./entity/Entity');
 
