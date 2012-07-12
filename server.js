@@ -8,7 +8,12 @@ var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
 
-var game = [undefined,undefined];
+var field = require('./graph/Field').Field(9,9);
+field.connect();
+
+var playerFactory = require('./entity/Player');
+
+var game = [];
 var playerCount = 0;
 
 var app = express.createServer();
@@ -23,20 +28,65 @@ app.get('/', function(req, res){
     res.sendfile(__dirname + '/Client/Client.html');
 });
 
-socketconnection.sockets.on('run_up',function(socket){
-    console.log('running up...');
-    /*TODO: prüfe ob nach oben gelaufen werden darf, wenn ja Spieler ein Feld nach oben setzen und den clients bescheid sagen...*/
+var clients=[undefined,undefined];
+var clientNumber=0;
+
+var players = [];
+
+socketconnection.sockets.on('connection', function (socket) {
+    if(clientNumber < 2) {
+        if(clientNumber){
+            var player = playerFactory.player(8,8,clientNumber);
+            players[clientNumber] = player;
+            field.getNode(8,8).containedEntity = player; /*new player*/;
+            socket.emit('identity',{player:player});
+        } else {
+            var player = playerFactory.player(0,0,clientNumber);
+            players[clientNumber] = player;
+            field.getNode(0,0).containedEntity = player; /*new player*/;
+            socket.emit('identity',{player:player});
+        }
+        clients[clientNumber++] = socket;
+
+
+        socket.on('run_up',function(data){
+            var player = players[data['id']];
+            if(field.getNode(player.x,player.y-1)){
+                player.y -= 1;
+                clients[0].emit('update',{player_x:player.x,player_y:player.y});
+                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+            }
+        });
+        socket.on('run_down',function(data){
+            var player = players[data['id']];
+            if(field.getNode(player.x,player.y+1)){
+                player.y += 1;
+                clients[0].emit('update',{player_x:player.x,player_y:player.y});
+                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+            }
+        });
+        socket.on('run_left',function(data){
+            var player = players[data['id']];
+            if(field.getNode(player.x-1,player.y)){
+                player.x -= 1;
+                clients[0].emit('update',{player_x:player.x,player_y:player.y});
+                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+            }
+        });
+        socket.on('run_right',function(data){
+            var player = players[data['id']];
+            if(field.getNode(player.x+1,player.y)){
+                player.x += 1;
+                clients[0].emit('update',{player_x:player.x,player_y:player.y});
+                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+            }
+        });
+        socket.on('drop_bomb',function(data){
+
+        });
+    } else {
+        console.log('Game full..');
+    }
 });
 
-/*TODO: auf client-anfragen reagieren ...*/
-socketconnection.sockets.on('run_down',function(socket){
-    console.log('running down...');
-});
 
-socketconnection.sockets.on('run_left',function(socket){
-    console.log('running left');
-});
-
-socketconnection.sockets.on('run_right',function(socket){
-   console.log('running right');
-});
