@@ -26,9 +26,9 @@ socket.on('identity', function(data){
 socket.on('update',function(data){
     console.log(player);
     console.log(otherplayer);
-    console.log("Player should be " + data);
+    console.log("Player should be " + data.entity);
 
-    if(player.id = data.entity.id){
+    if(player.id == data.entity.id){
         console.log('got current player id');
         var tmpx=player.x;
         var tmpy=player.y;
@@ -37,11 +37,11 @@ socket.on('update',function(data){
     }else{
         console.log('got other player id');
         if(otherplayer){
-        var tmpx=otherplayer.x;
-        var tmpy=otherplayer.y;
-    }
+            var tmpx1=otherplayer.x;
+            var tmpy1=otherplayer.y;
+        }
         otherplayer = data['entity'];
-        drawPicture(0,otherplayer.x,otherplayer.y,tmpx,tmpy);
+        drawPicture(0,otherplayer.x,otherplayer.y,tmpx1,tmpy1);
     }
 
 
