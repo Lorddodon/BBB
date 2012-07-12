@@ -7,35 +7,40 @@
  */
 
 var socket = io.connect('http://localhost:8000');
-
+var player = undefined;
 
 socket.on('news', function (data) {
     console.log(data);
     socket.emit('my other event', { my: 'data' });
 });
 
-socket.on('identity', function(){
+socket.on('identity', function(data){
     console.log('identity called')
-
+    player = data['player'];
+    console.log(player);
 })
 
+socket.on('update',function(data){
+   console.log(data);
+});
+
 Mousetrap.bind('right', function() {
-    socket.emit("run_right")
+    socket.emit("run_right",{id:player.id})
     console.log("run_right")
 
 });
 
 Mousetrap.bind('left', function() {
-    socket.emit("run_left")
+    socket.emit("run_left",{id:player.id})
     console.log("run_left")
 
 });
 Mousetrap.bind('up', function() {
-    socket.emit("run_up")
+    socket.emit("run_up",{id:player.id})
     console.log("run_up")
 });
 Mousetrap.bind('down', function() {
-    socket.emit("run_down")
+    socket.emit("run_down",{id:player.id})
     console.log("run_down")
 });
 Mousetrap.bind('space', function() {
