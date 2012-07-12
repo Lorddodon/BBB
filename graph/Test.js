@@ -4,4 +4,4 @@ var util = require('../util');
 
 var field = fieldFactory.Field(9, 9);
 field.connect();
-console.log(field);
+console.log(123%12);
