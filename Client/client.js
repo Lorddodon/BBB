@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-var socket = io.connect('http://localhost:8000');
+var socket = io.connect();
 var player = undefined;
 var otherplayer = undefined;
 var graph = undefined;
@@ -52,13 +52,25 @@ socket.on('update',function(data){
 });
 
 socket.on('show_flame',function(data){
-   console.log('show the animation..');
-    /*TODO: implement this*/
+    console.log(data);
+    var id = data.id;
 });
 
 socket.on('bomb_placed',function(data){
     /*TODO: zeichne an position eine bombe*/
     var bomb = data['bomb'];
+});
+
+socket.on('bomb_explode',function(data){
+   /*TODO: bombe löschen*/
+});
+
+socket.on('delete_entities',function(data){
+
+});
+
+socket.on('players_died',function(data){
+    console.log(data);
 });
 
 Mousetrap.bind('right', function() {
