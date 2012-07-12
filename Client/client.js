@@ -7,7 +7,6 @@
  */
 
 var socket = io.connect('http://localhost:8000');
-var utils = require('utils');
 
 
 socket.on('news', function (data) {
