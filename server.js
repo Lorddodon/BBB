@@ -8,12 +8,17 @@ var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
 
+maxBombCount = 2;
+bombRadius = 3;
+bombId = 0;
+bombs = [];
+
+
 var field = require('./graph/Field').Field(9,9);
 field.connect();
 
 var playerFactory = require('./entity/Player');
 
-var game = [];
 var playerCount = 0;
 
 var app = express.createServer();
@@ -33,60 +38,100 @@ var clientNumber=0;
 
 var players = [];
 
+function broadCast(command, data) {
+    clients[0].emit(command,data);
+    clients[1].emit(command,data);
+}
+
 socketconnection.sockets.on('connection', function (socket) {
     if(clientNumber < 2) {
         if(clientNumber){
             var player = playerFactory.player(8,8,clientNumber);
-            players[clientNumber] = player;
             field.getNode(8,8).containedEntity = player; /*new player*/;
             socket.emit('identity',{player:player});
+            player.currentBombCount = 0;
+            players[clientNumber] = player;
         } else {
             var player = playerFactory.player(0,0,clientNumber);
-            players[clientNumber] = player;
             field.getNode(0,0).containedEntity = player; /*new player*/;
             socket.emit('identity',{player:player});
+            player.currentBombCount = 0;
+            players[clientNumber] = player;
         }
         clients[clientNumber++] = socket;
 
 
         socket.on('run_up',function(data){
             var player = players[data['id']];
-            if(field.getNode(player.x,player.y-1)){
+            var currentField = field.getNode(player.x,player.y-1);
+            if(currentField && !currentField.containedEntity){
+                field.getNode(player.x,player.y).containedEntity = null;
                 player.y -= 1;
-                clients[0].emit('update',{player_x:player.x,player_y:player.y});
-                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+                field.getNode(player.x,player.y).containedEntity = player;
+                broadCast('update',player);
             }
         });
         socket.on('run_down',function(data){
             var player = players[data['id']];
-            if(field.getNode(player.x,player.y+1)){
+            var currentField = field.getNode(player.x,player.y+1);
+            if(currentField && !currentField.containedEntity){
+                field.getNode(player.x,player.y).containedEntity = null;
                 player.y += 1;
-                clients[0].emit('update',{player_x:player.x,player_y:player.y});
-                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+                field.getNode(player.x,player.y).containedEntity = player;
+                broadCast('update',player);
             }
         });
         socket.on('run_left',function(data){
             var player = players[data['id']];
-            if(field.getNode(player.x-1,player.y)){
+            var currentField = field.getNode(player.x-1,player.y);
+            if(currentField && !currentField.containedEntity){
+                field.getNode(player.x,player.y).containedEntity = null;
                 player.x -= 1;
-                clients[0].emit('update',{player_x:player.x,player_y:player.y});
-                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+                field.getNode(player.x,player.y).containedEntity = player;
+                broadCast('update',player);
             }
         });
         socket.on('run_right',function(data){
             var player = players[data['id']];
-            if(field.getNode(player.x+1,player.y)){
+            var currentField = field.getNode(player.x+1,player.y);
+            if(currentField && !currentField.containedEntity){
+                field.getNode(player.x,player.y).containedEntity = null;
                 player.x += 1;
-                clients[0].emit('update',{player_x:player.x,player_y:player.y});
-                clients[1].emit('update',{player_x:player.x,player_y:player.y});
+                field.getNode(player.x,player.y).containedEntity = player;
+                broadCast('update',player);
             }
         });
         socket.on('drop_bomb',function(data){
+            var player = players[data['id']];
+            if(player.currentBombCount < maxBombCount) {
+                player.currentBombCount++;
+                var bomb = {x:player.x ,
+                    y:player.y ,
+                    id: bombId++,
+                    playerId:player.id
+                };
+                bombs.push(bomb.id);
+                broadCast('bomb_placed',bomb);
+                setTimeout(function(){
+                    broadCast('show_flame',{id:bomb.id});
+                },2500);
+                setTimeout(function(){
+                    /*TODO: prüfe welche objekte gelöscht werden müssen*/
+                    var objects = [];
+                    for(var i = bomb.x-bombRadius; i < bombRadius+bomb.x; i++) {
 
+                    }
+                    for(var j = bomb.y-bombRadius; j < bombRadius+bomb.y; i++) {
+
+                    }
+
+                    player.currentBombCount--;
+                    broadCast('bomb_explode',{id:bomb.id});
+                },3000);
+            }
         });
     } else {
         console.log('Game full..');
     }
 });
-
 
