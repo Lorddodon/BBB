@@ -98,8 +98,8 @@ function drawPicture(index,xpos,ypos,xposold,yposold)
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
-        context.clearRect(xposold*mul, yposold*mul, canvas.width, canvas.height);
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
+        context.clearRect(xposold*mul+4, yposold*mul+4, 30, 30);
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
     }
 }
 
