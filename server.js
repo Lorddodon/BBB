@@ -114,35 +114,56 @@ socketconnection.sockets.on('connection', function (socket) {
                     broadCast('show_flame',{id:bomb.id});
                 },2500);
                 setTimeout(function(){
-                    /*TODO: prüfe wenn explosion bombe trifft dann erneute explosion ausführen*/
+                    /*TODO: prüfe welche objekte gelöscht werden müssen*/
                     var objects = [];
                     var died_players = [];
-                    for(var i = bomb.x-bombRadius; i < bombRadius+bomb.x; i++) {
+                    for(var i = bomb.x; i >= bomb.x-bombRadius; i--) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField && currField.containedEntity) {
-                            if(currField.containedEntity.type === 'player'){
-                                died_players.push(objects);
-                            } else {
+                            if(currField.containedEntity.type == 'player')
+                                died_players.push(currField.containedEntity);
+                            else
                                 objects.push(currField.containedEntity);
-                            }
                             currField.containedEntity = null;
+                            break;
                         }
                     }
-                    for(var j = bomb.y-bombRadius; j < bombRadius+bomb.y; i++) {
+                    for(var i = bomb.x; i <= bomb.x+bombRadius; i++) {
+                        var currField = field.getNode(i,bomb.y);
+                        if(currField && currField.containedEntity) {
+                            if(currField.containedEntity.type == 'player')
+                                died_players.push(currField.containedEntity);
+                            else
+                                objects.push(currField.containedEntity);
+                            currField.containedEntity = null;
+                            break;
+                        }
+                    }
+                    for(var j = bomb.y; j >= bomb.y-bombRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField && currField.containedEntity) {
-                            if(currField.containedEntity.type === 'player'){
-                                died_players.push(objects);
-                            } else {
+                            if(currField.containedEntity.type == 'player')
+                                died_players.push(currField.containedEntity);
+                            else
                                 objects.push(currField.containedEntity);
-                            }
                             currField.containedEntity = null;
+                            break;
+                        }
+                    }
+                    for(var j = bomb.y; j <= bomb.y+bombRadius; i++) {
+                        var currField = field.getNode(bomb.x,j);
+                        if(currField && currField.containedEntity) {
+                            if(currField.containedEntity.type == 'player')
+                                died_players.push(currField.containedEntity);
+                            else
+                                objects.push(currField.containedEntity);
+                            currField.containedEntity = null;
+                            break;
                         }
                     }
 
                     player.currentBombCount--;
                     broadCast('bomb_explode',{id:bomb.id});
-                    broadCast('player_died',{players:died_players});
                     broadCast('delete_entities',{delete_array:objects});
                 },3000);
             }
