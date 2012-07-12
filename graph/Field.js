@@ -11,12 +11,15 @@ var field = function createField(fieldWidth, fieldHeight) {
         },
 
         getNode : function (x, y) {
-        return this.nodes[y * fieldHeight + x];
+            if(x < 0 || y < 0)
+                return null;
+            else
+                return this.nodes[y * fieldHeight + x];
         },
 
         createNodeIfUndefined : function(x, y) {
         var node = this.getNode(x, y);
-        if(typeof node === "undefined")
+        if(node == null)
             node = new nodeFactory.Node(x, y);
         return node;
         },
