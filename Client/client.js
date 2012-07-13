@@ -8,7 +8,7 @@
 
 var socket = io.connect();
 var player = undefined;
-var otherplayer = undefined;
+var otherplayer = [];
 var graph = undefined;
 
 var bombs = [];
@@ -27,6 +27,11 @@ socket.on('identity', function(data){
     console.log(player);
 });
 
+socket.on('players', function(data){
+   data.players;
+
+});
+
 socket.on('update',function(data){
     if(player.id == data.entity.id){
         console.log('got current player id');
@@ -36,12 +41,12 @@ socket.on('update',function(data){
         drawPicture(0,player.x,player.y,tmpx,tmpy, "player1");
     }else{
         console.log('got other player id');
-        if(otherplayer){
-            var tmpx1=otherplayer.x;
-            var tmpy1=otherplayer.y;
+        if(otherplayer[data['entity'].id]){
+            var tmpx1=otherplayer[data['entity']].x;
+            var tmpy1=otherplayer[data['entity']].y;
         }
-        otherplayer = data['entity'];
-        drawPicture(7,otherplayer.x,otherplayer.y,tmpx1,tmpy1, "player2");
+        otherplayer[data['entity'].id] = data['entity'];
+        drawPicture(7,otherplayer[data['entity']].x,otherplayer[data['entity']].y,tmpx1,tmpy1, "player2");
     }
     console.log(player.x);
 
