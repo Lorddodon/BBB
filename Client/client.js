@@ -155,7 +155,7 @@ function drawFlame(xpos, ypos) {
     context.fillStyle = '#ff0000';
     context.fillRect(xpos*mul,ypos*mul,30,30);
     var count = 0;
-    for (var i = xpos+1; i <= xpos+player.blastRadius; i++) {
+    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius; i++) {
         if(graph.nodes[ypos*graph.height+i]) {
             if(count < 1) {
                 if(graph.nodes[ypos*graph.height+i].containedEntity) {
@@ -170,7 +170,7 @@ function drawFlame(xpos, ypos) {
     }
 
     count = 0;
-    for (var i = xpos-1; i >= xpos-player.blastRadius; i--) {
+    for (var i = xpos-1; i >= xpos-otherplayer[player.id].blastRadius; i--) {
         if(graph.nodes[ypos*graph.height+i]) {
             if(count < 1) {
                 if(graph.nodes[ypos*graph.height+i].containedEntity) {
@@ -185,7 +185,7 @@ function drawFlame(xpos, ypos) {
     }
 
     count = 0;
-    for (var i = ypos+1; i <= ypos+player.blastRadius; i++) {
+    for (var i = ypos+1; i <= ypos+otherplayer[player.id].blastRadius; i++) {
         if(graph.nodes[i*graph.height+xpos]) {
             if(count < 1) {
                 if(graph.nodes[i*graph.height+xpos].containedEntity) {
@@ -200,7 +200,7 @@ function drawFlame(xpos, ypos) {
     }
 
     count = 0;
-    for (var i = ypos-1; i >= ypos-player.blastRadius; i--) {
+    for (var i = ypos-1; i >= ypos-otherplayer[player.id].blastRadius; i--) {
         if(graph.nodes[i*graph.height+xpos]) {
             if(count < 1) {
                 if(graph.nodes[i*graph.height+xpos].containedEntity) {
@@ -316,7 +316,7 @@ function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
 }
 
 function drawPlayers(){
-    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
+    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 30;
     var mul = 30;
 
     image = new Image();
@@ -339,7 +339,7 @@ function drawPlayers(){
             x = (indextemp%numFrames)*frameSize;
 
 
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+3, ypos*mul+3, frameSize, frameSize);
     }
         for(var i=0;otherplayer.length>i;i++){
             if(otherplayer[i].isAlive)
