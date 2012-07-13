@@ -116,26 +116,26 @@ socket.on('players_died',function(data){
 
 Mousetrap.bind('right', function() {
     socket.emit("run_right",{id:player.id})
-    console.log("run_right")
+   
 
 });
 
 Mousetrap.bind('left', function() {
     socket.emit("run_left",{id:player.id})
-    console.log("run_left")
+
 
 });
 Mousetrap.bind('up', function() {
     socket.emit("run_up",{id:player.id})
-    console.log("run_up")
+
 });
 Mousetrap.bind('down', function() {
     socket.emit("run_down",{id:player.id})
-    console.log("run_down")
+
 });
 Mousetrap.bind('space', function() {
     socket.emit("drop_bomb",{id:player.id})
-    console.log("drop_bomb")
+
 });
 
 function drawBomb(xpos, ypos){
