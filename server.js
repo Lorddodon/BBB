@@ -34,8 +34,13 @@ app.listen(port);
 
 var socketconnection = socketio.listen(app);
 
-/*TODO: wenn index.html aufgerufen werden soll lobby zeigen ...*/
+
 app.get('/', function(req, res){
+    /*TODO: fürs erste sollte es reichen das man ein spiel eröffnet und die spielen dort zuweist..*/
+    res.sendfile(__dirname + '/Client/index.html');
+});
+
+app.get('/start', function(req, res){
     /*TODO: fürs erste sollte es reichen das man ein spiel eröffnet und die spielen dort zuweist..*/
     res.sendfile(__dirname + '/Client/Client.html');
 });
