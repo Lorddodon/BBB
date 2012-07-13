@@ -36,7 +36,7 @@ socket.on('update',function(data){
         var tmpx=player.x;
         var tmpy=player.y;
         player = data['entity'];
-        drawPicture(0,player.x,player.y,tmpx,tmpy);
+        drawPicture(0,player.x,player.y,tmpx,tmpy, "player1");
     }else{
         console.log('got other player id');
         if(otherplayer){
@@ -44,7 +44,7 @@ socket.on('update',function(data){
             var tmpy1=otherplayer.y;
         }
         otherplayer = data['entity'];
-        drawPicture(7,otherplayer.x,otherplayer.y,tmpx1,tmpy1);
+        drawPicture(7,otherplayer.x,otherplayer.y,tmpx1,tmpy1, "player2");
     }
 
 
@@ -292,7 +292,7 @@ function drawObstacles() {
     }
 }
 
-function drawPicture(index,xpos,ypos,xposold,yposold)
+function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
 {
     var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
     var mul = 30;
@@ -301,11 +301,11 @@ function drawPicture(index,xpos,ypos,xposold,yposold)
     image.onload = function() {
         width = image.width;
         height = image.height;
-        canvas = document.getElementById("myCanvas");
+        canvas = document.getElementById(myCanvas);
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
-        context.clearRect(xposold*mul+4, yposold*mul+4, 30, 30);
+        context.clearRect(xposold*mul+4, yposold*mul+4, canvas.width, canvas.height);
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
     }
 }
