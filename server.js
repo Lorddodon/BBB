@@ -123,6 +123,9 @@ function startServer(port) {
 
             socket.on('drop_bomb',function(data){
                 var player = players[data['id']];
+                if(!player.isAlive) {
+                    return;
+                }
                 if(player.currentBombCount < player.maxBombCount) {
                     player.currentBombCount++;
                     var bomb = entityFactory.entity(player.x, player.y, bombId++, 'bomb');
