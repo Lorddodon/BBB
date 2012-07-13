@@ -64,7 +64,7 @@ function startServer(port) {
         player.blastRadius = 1;
         players[clientNumber] = player;
         socket.emit('identity',{entity:player});
-        socket.emit('players',{players:players});
+        broadCast('players',{players:players});
     }
 
     socketconnection.sockets.on('connection', function (socket) {
