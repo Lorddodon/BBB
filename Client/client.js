@@ -108,7 +108,7 @@ socket.on('players_died',function(data){
     if(data.players.length == 2)
         alert("Draw");
     else
-        alert("Game over. Player "+ data.players[0].id + " died.");
+        alert("Game over. Player "+ data.players[0].id + " died.",{left:30, top:20});
 
     console.log(data);
 });
