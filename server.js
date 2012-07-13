@@ -21,7 +21,7 @@ bombId = 0;
 bombs = [];
 
 
-var field = require('./graph/Field').Field(9,9);
+var field = require('./graph/Field').Field(11,11);
 field.connect();
 generator.generate(field, 25);
 
@@ -59,12 +59,12 @@ function broadCast(command, data) {
 function placePlayer(x, y, socket) {
     var player = entityFactory.entity(x,y,clientNumber, "player");
     field.getNode(x,y).containedEntity = player; /*new player*/;
-    socket.emit('identity',{entity:player});
-    socket.emit('players',{players:players});
     player.currentBombCount = 0;
     player.maxBombCount = 1;
     player.blastRadius = 1;
     players[clientNumber] = player;
+    socket.emit('identity',{entity:player});
+    socket.emit('players',{players:players});
 }
 
 socketconnection.sockets.on('connection', function (socket) {
@@ -78,23 +78,6 @@ socketconnection.sockets.on('connection', function (socket) {
         }
         console.log("Nach switch");
         socket.emit('graph',{graph:field});
-        if(clientNumber){
-            var player = entityFactory.entity(8,8,clientNumber, "player");
-            field.getNode(8,8).containedEntity = player; /*new player*/;
-            socket.emit('identity',{entity:player});
-            player.currentBombCount = 0;
-            player.maxBombCount = 1;
-            player.blastRadius = 1;
-            players[clientNumber] = player;
-        } else {
-            var player = entityFactory.entity(0,0,clientNumber, "player");
-            field.getNode(0,0).containedEntity = player; /*new player*/;
-            socket.emit('identity',{entity:player});
-            player.currentBombCount = 0;
-            player.maxBombCount = 1;
-            player.blastRadius = 1;
-            players[clientNumber] = player;
-        }
         clients[clientNumber++] = socket;
 
         function runTo(xDir, yDir, data) {
@@ -144,11 +127,12 @@ socketconnection.sockets.on('connection', function (socket) {
                 field.getNode(player.x, player.y).containedEntity = bomb;
                 bombs.push(bomb.id);
                 broadCast('bomb_placed',{bomb:bomb});
+
                 setTimeout(function(){
                     broadCast('show_flame',{bomb:bomb});
                 },2000);
+
                 setTimeout(function(){
-                    /*TODO: prüfe welche objekte gelöscht werden müssen*/
                     var bombIndex = -1;
                     for (var searchIndex = 0; i < bombs.length; searchIndex++) {
                         if(bombs[searchIndex].id == bomb.id){
