@@ -8,7 +8,7 @@
 
 
 
-function drawPicture(index)
+var drawPicture = function(index)
 {
     var canvas, context, image, width, height, xpos = 0, ypos = 0, numFrames = 15, frameSize = 29;
     image = new Image();
@@ -20,10 +20,11 @@ function drawPicture(index)
         ypos = (index-(index%numFrames))/numFrames*frameSize;
         xpos = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
-        context.drawImage(image, xpos, ypos, frameSize, frameSize, 0, 0, frameSize, frameSize)
-        /*context.clearRect(0, 0, canvas.width, canvas.height);*/
-
+        context.drawImage(image, xpos, ypos, frameSize, frameSize, 0, 0, frameSize, frameSize);
+        context.clearRect(2, 2, canvas.width, canvas.height);
     }
 }
 
-drawPicture(1);
+drawPicture(33);
+
+module.exports.drawPicture = drawPicture;

@@ -75,47 +75,40 @@ socketconnection.sockets.on('connection', function (socket) {
         }
         clients[clientNumber++] = socket;
 
-
-        socket.on('run_up',function(data){
+        function runTo(xDir, yDir, data) {
             var player = players[data['id']];
-            var currentField = field.getNode(player.x,player.y-1);
-            if(currentField && !currentField.containedEntity){
+            function movePlayer(xDir, yDir) {
                 field.getNode(player.x,player.y).containedEntity = null;
-                player.y -= 1;
+                player.x += xDir;
+                player.y += yDir;
                 field.getNode(player.x,player.y).containedEntity = player;
                 broadCast('update',{entity:player});
             }
+            var currentField = field.getNode(player.x + xDir,player.y + yDir);
+            if(currentField)
+                if(!currentField.containedEntity) {
+                    movePlayer(xDir, yDir);
+                }
+                else if(currentField.containedEntity.type.indexOf('power') == 0) {
+                    broadCast('delete_entities', {delete_array:[currentField.containedEntity]});
+                    movePlayer(xDir, yDir);
+                    /*TODO: player update*/
+                }
+        }
+
+        socket.on('run_up',function(data) {
+            runTo(0, -1, data);
         });
         socket.on('run_down',function(data){
-            var player = players[data['id']];
-            var currentField = field.getNode(player.x,player.y+1);
-            if(currentField && !currentField.containedEntity){
-                field.getNode(player.x,player.y).containedEntity = null;
-                player.y += 1;
-                field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{entity:player});
-            }
+            runTo(0, 1, data);
         });
         socket.on('run_left',function(data){
-            var player = players[data['id']];
-            var currentField = field.getNode(player.x-1,player.y);
-            if(currentField && !currentField.containedEntity){
-                field.getNode(player.x,player.y).containedEntity = null;
-                player.x -= 1;
-                field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{entity:player});
-            }
+            runTo(-1, 0, data);
         });
         socket.on('run_right',function(data){
-            var player = players[data['id']];
-            var currentField = field.getNode(player.x+1,player.y);
-            if(currentField && !currentField.containedEntity){
-                field.getNode(player.x,player.y).containedEntity = null;
-                player.x += 1;
-                field.getNode(player.x,player.y).containedEntity = player;
-                broadCast('update',{entity:player});
-            }
+            runTo(1, 0, data);
         });
+
         socket.on('drop_bomb',function(data){
             var player = players[data['id']];
             if(player.currentBombCount < maxBombCount) {
@@ -140,15 +133,31 @@ socketconnection.sockets.on('connection', function (socket) {
 
                     var objects = [];
                     var died_players = [];
+                    var powerups = [];
+                    var droprate = 1;
+
                     for(var i = bomb.x; i >= bomb.x-bombRadius; i--) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField ) {
-                            if( currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                            if (currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+                                }
                                 break;
                             }
                         } else
@@ -158,11 +167,24 @@ socketconnection.sockets.on('connection', function (socket) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField ) {
                             if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+                                }
                                 break;
                             }
                         } else
@@ -172,11 +194,24 @@ socketconnection.sockets.on('connection', function (socket) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField) {
                             if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+                                }
                                 break;
                             }
                         } else
@@ -185,12 +220,25 @@ socketconnection.sockets.on('connection', function (socket) {
                     for(var j = bomb.y; j <= bomb.y+bombRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField) {
-                            if(currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                            if (currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+                                }
                                 break;
                             }
                         } else
@@ -202,6 +250,7 @@ socketconnection.sockets.on('connection', function (socket) {
                     if(died_players.length > 0)
                         broadCast('players_died',{players:died_players});
                     broadCast('delete_entities',{delete_array:objects});
+                    broadCast('powerups', {powerups:powerups});
                 },2500);
             }
         });
