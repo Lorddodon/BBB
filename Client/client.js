@@ -105,10 +105,11 @@ socket.on('delete_entities',function(data){
 });
 
 socket.on('players_died',function(data){
-    if(data.length == 2)
+    if(data.players.length == 2)
         alert("Draw");
     else
-        alert("Game over. Player "+ data[0].entity.id + "died.");
+        alert("Game over. Player "+ data.players[0].id + " died.");
+
     console.log(data);
 });
 
