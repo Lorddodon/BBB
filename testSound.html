@@ -1,0 +1,21 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<script type="text/javascript">
+
+    var MSIE=navigator.userAgent.indexOf("MSIE");
+    var NETS=navigator.userAgent.indexOf("Netscape");
+    var OPER=navigator.userAgent.indexOf("Opera");
+    if((MSIE>-1) || (OPER>-1)) {
+        document.write("<bgsound SRC=./mario.mid LOOP=INFINITE>");
+    } else {
+        document.write("<embed SRC=./mario.mid AUTOSTART=TRUE ");
+        document.write("HIDDEN=true VOLUME=100 LOOP=TRUE>");
+    }
+</script>
+</body>
+</html>
