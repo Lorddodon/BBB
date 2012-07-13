@@ -46,16 +46,14 @@ app.get('/start', function(req, res){
     res.sendfile(__dirname + '/Client/Client.html');
 });
 
-var clients=[undefined,undefined];
+var clients=[];
 var clientNumber=0;
 
 var players = [];
 
 function broadCast(command, data) {
-    if(clients[0])
-    clients[0].emit(command,data);
-    if(clients[1])
-    clients[1].emit(command,data);
+    for(var i = 0; i < clients.length; i++)
+        clients[i].emit(command,data);
 }
 
 function placePlayer(x, y, socket) {
