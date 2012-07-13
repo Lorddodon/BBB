@@ -36,6 +36,9 @@ function startServer(port) {
     app.listen(port);
 
     var socketconnection = socketio.listen(app);
+    socketconnection.configure('production', function() {
+        socketconnection.set('log level', 0);
+    });
 
     app.get('/', function(req, res){
         /*TODO: fürs erste sollte es reichen das man ein spiel eröffnet und die spielen dort zuweist..*/
@@ -185,6 +188,7 @@ function startServer(port) {
                                 return false;
                         }
 
+                        //delete bomb at location
                         field.getNode(bomb.x, bomb.y).containedEntity = null;
                         for(var i = bomb.x; i >= bomb.x-player.blastRadius; i--) {
                             if(!blastTo(i, bomb.y))
