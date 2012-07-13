@@ -108,9 +108,9 @@ socket.on('delete_entities',function(data){
 
 socket.on('players_died',function(data){
     if(data.length == 2)
-        window.alert("Draw");
+        alert("Draw");
     else
-        window.alert("Game over. Player "+ data[0].entity.id + "died.");
+        alert("Game over. Player "+ data[0].entity.id + "died.");
     console.log(data);
 });
 
