@@ -23,30 +23,29 @@ socket.on('graph', function(data){
 socket.on('identity', function(data){
     console.log('identity called')
     player = data['entity'];
-    drawPicture(0,player.x,player.y,0,0, "player1");
+
     console.log(player);
 });
 
 socket.on('players', function(data){
-   data.players;
+
+    otherplayer=data.players;
+    drawPlayers();
+
 });
 
 socket.on('update',function(data){
     if(player.id == data.entity.id){
-        console.log('got current player id');
-        var tmpx=player.x;
-        var tmpy=player.y;
+        console.log('got current player id '+data['entity'].id);
+
         player = data['entity'];
-        drawPicture(0,player.x,player.y,tmpx,tmpy, "player1");
-    }else{
-        console.log('got other player id');
-        if(otherplayer[data['entity'].id]){
-            var tmpx1=otherplayer[data['entity']].x;
-            var tmpy1=otherplayer[data['entity']].y;
-        }
         otherplayer[data['entity'].id] = data['entity'];
-        drawPicture(7,otherplayer[data['entity']].x,otherplayer[data['entity']].y,tmpx1,tmpy1, "player2");
+    }else{
+
+        otherplayer[data['entity'].id] = data['entity'];
+
     }
+    drawPlayers();
     console.log(player.x);
 
 });
@@ -262,6 +261,7 @@ function drawBackgroundGrid() {
             context.stroke();
         }
     }
+    drawPlayers();
 }
 
 function removeObstacle(xpos, ypos) {
@@ -323,7 +323,7 @@ function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
     image.onload = function() {
         width = image.width;
         height = image.height;
-        canvas = document.getElementById(myCanvas);
+        canvas = document.getElementById("players");
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
@@ -331,6 +331,39 @@ function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
     }
 }
+
+function drawPlayers(){
+    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
+    var mul = 30;
+
+    image = new Image();
+    image.src = "./spritesheet.png";
+    image.onload = function() {
+        canvas = document.getElementById('players');
+        context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        function drawPlayer(xpos,ypos,index){
+            var indextemp;
+            if(index==player.id){
+                indextemp=0;
+            }else{
+                indextemp=7;
+            }
+            width = image.width;
+            height = image.height;
+
+            y = (indextemp-(indextemp%numFrames))/numFrames*frameSize;
+            x = (indextemp%numFrames)*frameSize;
+
+
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
+    }
+        for(var i=0;otherplayer.length>i;i++){
+            drawPlayer(otherplayer[i].x,otherplayer[i].y,otherplayer[i].id);
+        }
+}
+};
+
 
 function drawLoop() {
     var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
