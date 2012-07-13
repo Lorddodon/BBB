@@ -36,7 +36,7 @@ function startServer(port) {
     app.listen(port);
 
     var socketconnection = socketio.listen(app);
-    socketconnection.configure('production', function() {
+    socketconnection.configure(function() {
         socketconnection.set('log level', 0);
     });
 
