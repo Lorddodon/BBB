@@ -23,14 +23,12 @@ socket.on('graph', function(data){
 socket.on('identity', function(data){
     console.log('identity called')
     player = data['entity'];
-    drawPicture(0,player.x,player.y,tmpx,tmpy, "player1");
+    drawPicture(0,player.x,player.y,0,0, "player1");
     console.log(player);
 });
 
 socket.on('update',function(data){
-    console.log(player);
-    console.log(otherplayer);
-    console.log("Player should be " + data.entity);
+
 
     if(player.id == data.entity.id){
         console.log('got current player id');
@@ -116,7 +114,7 @@ socket.on('players_died',function(data){
 
 Mousetrap.bind('right', function() {
     socket.emit("run_right",{id:player.id})
-   
+
 
 });
 
