@@ -28,8 +28,6 @@ socket.on('identity', function(data){
 });
 
 socket.on('update',function(data){
-
-
     if(player.id == data.entity.id){
         console.log('got current player id');
         var tmpx=player.x;
@@ -45,10 +43,6 @@ socket.on('update',function(data){
         otherplayer = data['entity'];
         drawPicture(7,otherplayer.x,otherplayer.y,tmpx1,tmpy1, "player2");
     }
-
-
-
-
     console.log(player.x);
 
 });
@@ -190,7 +184,7 @@ function drawFlame(xpos, ypos) {
     context.fillStyle = '#ff0000';
     context.fillRect(xpos*mul,ypos*mul,30,30);
     var count = 0;
-    for (var i = xpos+1; i <= xpos+3; i++) {
+    for (var i = xpos+1; i <= xpos+player.blastRadius; i++) {
         if(graph.nodes[ypos*graph.height+i]) {
             if(count < 1) {
                 if(graph.nodes[ypos*graph.height+i].containedEntity) {
@@ -205,7 +199,7 @@ function drawFlame(xpos, ypos) {
     }
 
     count = 0;
-    for (var i = xpos-1; i >= xpos-3; i--) {
+    for (var i = xpos-1; i >= xpos-player.blastRadius; i--) {
         if(graph.nodes[ypos*graph.height+i]) {
             if(count < 1) {
                 if(graph.nodes[ypos*graph.height+i].containedEntity) {
@@ -220,7 +214,7 @@ function drawFlame(xpos, ypos) {
     }
 
     count = 0;
-    for (var i = ypos+1; i <= ypos+3; i++) {
+    for (var i = ypos+1; i <= ypos+player.blastRadius; i++) {
         if(graph.nodes[i*graph.height+xpos]) {
             if(count < 1) {
                 if(graph.nodes[i*graph.height+xpos].containedEntity) {
@@ -235,7 +229,7 @@ function drawFlame(xpos, ypos) {
     }
 
     count = 0;
-    for (var i = ypos-1; i >= ypos-3; i--) {
+    for (var i = ypos-1; i >= ypos-player.blastRadius; i--) {
         if(graph.nodes[i*graph.height+xpos]) {
             if(count < 1) {
                 if(graph.nodes[i*graph.height+xpos].containedEntity) {

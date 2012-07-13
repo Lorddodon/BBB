@@ -14,8 +14,8 @@ var express = require('express');
 var utils = require('util');
 var generator = require('./graph/Generator');
 
-maxBombCount = 2;
-bombRadius = 3;
+finalBombCount = 6;
+finalBlastRadius = 4;
 bombId = 0;
 bombs = [];
 
@@ -65,12 +65,16 @@ socketconnection.sockets.on('connection', function (socket) {
             field.getNode(8,8).containedEntity = player; /*new player*/;
             socket.emit('identity',{entity:player});
             player.currentBombCount = 0;
+            player.maxBombCount = 1;
+            player.blastRadius = 1;
             players[clientNumber] = player;
         } else {
             var player = entityFactory.entity(0,0,clientNumber, "player");
             field.getNode(0,0).containedEntity = player; /*new player*/;
             socket.emit('identity',{entity:player});
             player.currentBombCount = 0;
+            player.maxBombCount = 1;
+            player.blastRadius = 1;
             players[clientNumber] = player;
         }
         clients[clientNumber++] = socket;
@@ -78,7 +82,8 @@ socketconnection.sockets.on('connection', function (socket) {
         function runTo(xDir, yDir, data) {
             var player = players[data['id']];
             function movePlayer(xDir, yDir) {
-                field.getNode(player.x,player.y).containedEntity = null;
+                if(field.getNode(player.x,player.y).containedEntity.type != 'bomb')
+                    field.getNode(player.x,player.y).containedEntity = null;
                 player.x += xDir;
                 player.y += yDir;
                 field.getNode(player.x,player.y).containedEntity = player;
@@ -90,9 +95,13 @@ socketconnection.sockets.on('connection', function (socket) {
                     movePlayer(xDir, yDir);
                 }
                 else if(currentField.containedEntity.type.indexOf('power') == 0) {
+                    if(currentField.containedEntity.type === 'powerup_bomb' && player.maxBombCount < finalBombCount)
+                        player.maxBombCount++;
+                    else if(currentField.containedEntity.type === 'powerup_fire' && player.blastRadius < finalBlastRadius)
+                        player.blastRadius++;
+
                     broadCast('delete_entities', {delete_array:[currentField.containedEntity]});
                     movePlayer(xDir, yDir);
-                    /*TODO: player update*/
                 }
         }
 
@@ -111,9 +120,10 @@ socketconnection.sockets.on('connection', function (socket) {
 
         socket.on('drop_bomb',function(data){
             var player = players[data['id']];
-            if(player.currentBombCount < maxBombCount) {
+            if(player.currentBombCount < player.maxBombCount) {
                 player.currentBombCount++;
                 var bomb = entityFactory.entity(player.x, player.y, bombId++, 'bomb');
+                field.getNode(player.x, player.y).containedEntity = bomb;
                 bombs.push(bomb.id);
                 broadCast('bomb_placed',{bomb:bomb});
                 setTimeout(function(){
@@ -136,7 +146,7 @@ socketconnection.sockets.on('connection', function (socket) {
                     var powerups = [];
                     var droprate = 1;
 
-                    for(var i = bomb.x; i >= bomb.x-bombRadius; i--) {
+                    for(var i = bomb.x; i >= bomb.x-player.blastRadius; i--) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField ) {
                             if (currField.containedEntity) {
@@ -163,7 +173,7 @@ socketconnection.sockets.on('connection', function (socket) {
                         } else
                             break;
                     }
-                    for(var i = bomb.x; i <= bomb.x+bombRadius; i++) {
+                    for(var i = bomb.x; i <= bomb.x+player.blastRadius; i++) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField ) {
                             if (currField.containedEntity) {
@@ -190,7 +200,7 @@ socketconnection.sockets.on('connection', function (socket) {
                         } else
                             break;
                     }
-                    for(var j = bomb.y; j >= bomb.y-bombRadius; j--) {
+                    for(var j = bomb.y; j >= bomb.y-player.blastRadius; j--) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField) {
                             if (currField.containedEntity) {
@@ -217,7 +227,7 @@ socketconnection.sockets.on('connection', function (socket) {
                         } else
                             break;
                     }
-                    for(var j = bomb.y; j <= bomb.y+bombRadius; j++) {
+                    for(var j = bomb.y; j <= bomb.y+player.blastRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField) {
                             if (currField.containedEntity) {
