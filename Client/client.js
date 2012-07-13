@@ -94,12 +94,18 @@ socket.on('delete_entities',function(data){
 });
 
 socket.on('players_died',function(data){
-    if(data.players.length == otherplayer.length)
-        alert("Draw");
-    else
-        alert("Game over. Player "+ data.players[0].id + " died.",{left:30, top:20});
-
-    console.log(data);
+    var alive=0;
+    var aliveIndex=-1;
+    for(i = 0; i< otherplayer.length; i++){
+        if(otherplayer[i].isAlive){
+            alive++;
+            aliveIndex = i;
+        }
+    }
+    if(alive == 1)
+        alert("Game over. Player " + otherplayer[aliveIndex].id + "wins!");
+    if(alive == 0)
+        alert("Draw!");
 });
 
 socket.on('powerups',function(data){
