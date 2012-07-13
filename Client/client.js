@@ -16,7 +16,6 @@ var bombs = [];
 socket.on('graph', function(data){
     console.log('graph received..');
     graph = data['graph'];
-    /*TODO: zeichne Feld nach graphen*/
     drawBackgroundGrid();
     drawObstacles();
 });
@@ -45,7 +44,7 @@ socket.on('update',function(data){
             var tmpy1=otherplayer.y;
         }
         otherplayer = data['entity'];
-        drawPicture(0,otherplayer.x,otherplayer.y,tmpx1,tmpy1);
+        drawPicture(7,otherplayer.x,otherplayer.y,tmpx1,tmpy1);
     }
 
 
@@ -73,7 +72,6 @@ socket.on('show_flame',function(data){
 });
 
 socket.on('bomb_placed',function(data){
-    /*TODO: zeichne an position eine bombe*/
     var bomb = data['bomb'];
     bombs.push(bomb);
     drawBomb(bomb.x,bomb.y);
