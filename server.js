@@ -16,6 +16,7 @@ var generator = require('./graph/Generator');
 
 finalBombCount = 6;
 finalBlastRadius = 4;
+maxPlayers = 4;
 bombId = 0;
 bombs = [];
 
@@ -57,8 +58,27 @@ function broadCast(command, data) {
     clients[1].emit(command,data);
 }
 
+function placePlayer(x, y, socket) {
+    var player = entityFactory.entity(x,y,clientNumber, "player");
+    field.getNode(x,y).containedEntity = player; /*new player*/;
+    socket.emit('identity',{entity:player});
+    socket.emit('players',{players:players});
+    player.currentBombCount = 0;
+    player.maxBombCount = 1;
+    player.blastRadius = 1;
+    players[clientNumber] = player;
+}
+
 socketconnection.sockets.on('connection', function (socket) {
-    if(clientNumber < 2) {
+    if(clientNumber < maxPlayers) {
+        switch(clientNumber) {
+            case 0 : placePlayer(0,0, socket); break;
+            case 1 : placePlayer(field.width - 1, field.height - 1, socket); break;
+            case 2 : placePlayer(field.width - 1, 0, socket); break;
+            case 3 : placePlayer(0, field.height - 1, socket); break;
+            default : return;
+        }
+        console.log("Nach switch");
         socket.emit('graph',{graph:field});
         if(clientNumber){
             var player = entityFactory.entity(8,8,clientNumber, "player");
@@ -82,7 +102,7 @@ socketconnection.sockets.on('connection', function (socket) {
         function runTo(xDir, yDir, data) {
             var player = players[data['id']];
             function movePlayer(xDir, yDir) {
-                if(field.getNode(player.x,player.y).containedEntity.type != 'bomb')
+                if(field.getNode(player.x,player.y).containedEntity && field.getNode(player.x,player.y).containedEntity.type != 'bomb')
                     field.getNode(player.x,player.y).containedEntity = null;
                 player.x += xDir;
                 player.y += yDir;
@@ -146,9 +166,9 @@ socketconnection.sockets.on('connection', function (socket) {
                     var powerups = [];
                     var droprate = 1;
 
-                    for(var i = bomb.x; i >= bomb.x-player.blastRadius; i--) {
-                        var currField = field.getNode(i,bomb.y);
-                        if(currField ) {
+                    function blastTo(xDir, yDir) {
+                        var currField = field.getNode(xDir, yDir);
+                        if(currField) {
                             if (currField.containedEntity) {
                                 if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
@@ -160,98 +180,36 @@ socketconnection.sockets.on('connection', function (socket) {
                                     if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
                                         var powerup;
                                         if(Math.random() <= 0.5)
-                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_bomb');
+                                            powerup = entityFactory.entity(xDir, yDir, -1, 'powerup_bomb');
                                         else
-                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_fire');
+                                            powerup = entityFactory.entity(xDir, yDir, -1, 'powerup_fire');
                                         powerups.push(powerup);
                                         currField.containedEntity = powerup;
                                     }
                                     objects.push(currEntity);
                                 }
-                                break;
+                                return false;
                             }
+                            else
+                                return true;
                         } else
+                            return false;
+                    }
+
+                    for(var i = bomb.x; i >= bomb.x-player.blastRadius; i--) {
+                        if(!blastTo(i, bomb.y))
                             break;
                     }
                     for(var i = bomb.x; i <= bomb.x+player.blastRadius; i++) {
-                        var currField = field.getNode(i,bomb.y);
-                        if(currField ) {
-                            if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player') {
-                                    died_players.push(currField.containedEntity);
-                                    currField.containedEntity = null;
-                                }
-                                else {
-                                    var currEntity = currField.containedEntity;
-                                    currField.containedEntity = null;
-                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
-                                        var powerup;
-                                        if(Math.random() <= 0.5)
-                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_bomb');
-                                        else
-                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_fire');
-                                        powerups.push(powerup);
-                                        currField.containedEntity = powerup;
-                                    }
-                                    objects.push(currEntity);
-                                }
-                                break;
-                            }
-                        } else
+                        if(!blastTo(i, bomb.y))
                             break;
                     }
                     for(var j = bomb.y; j >= bomb.y-player.blastRadius; j--) {
-                        var currField = field.getNode(bomb.x,j);
-                        if(currField) {
-                            if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player') {
-                                    died_players.push(currField.containedEntity);
-                                    currField.containedEntity = null;
-                                }
-                                else {
-                                    var currEntity = currField.containedEntity;
-                                    currField.containedEntity = null;
-                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
-                                        var powerup;
-                                        if(Math.random() <= 0.5)
-                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_bomb');
-                                        else
-                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_fire');
-                                        powerups.push(powerup);
-                                        currField.containedEntity = powerup;
-                                    }
-                                    objects.push(currEntity);
-                                }
-                                break;
-                            }
-                        } else
+                        if(!blastTo(bomb.x, j))
                             break;
                     }
                     for(var j = bomb.y; j <= bomb.y+player.blastRadius; j++) {
-                        var currField = field.getNode(bomb.x,j);
-                        if(currField) {
-                            if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player') {
-                                    died_players.push(currField.containedEntity);
-                                    currField.containedEntity = null;
-                                }
-                                else {
-                                    var currEntity = currField.containedEntity;
-                                    currField.containedEntity = null;
-                                    if(currEntity.type === 'obstacle' && Math.random() <= droprate) {
-                                        var powerup;
-                                        if(Math.random() <= 0.5)
-                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_bomb');
-                                        else
-                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_fire');
-                                        powerups.push(powerup);
-                                        currField.containedEntity = powerup;
-                                    }
-                                    objects.push(currEntity);
-                                }
-                                break;
-                            }
-                        } else
+                        if(!blastTo(bomb.x, j))
                             break;
                     }
 
