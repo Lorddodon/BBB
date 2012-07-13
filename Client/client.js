@@ -286,7 +286,7 @@ function drawObstacles() {
             for (var j = 0; j < graph.width; j++) {
                 if(graph.nodes[i*graph.height+j] && graph.nodes[i*graph.height+j].containedEntity) {
                     if(graph.nodes[i*graph.height+j].containedEntity.type === 'obstacle') {
-                        drawObstacle(i,j);
+                        drawObstacle(j,i);
                     }
                 }
             }
