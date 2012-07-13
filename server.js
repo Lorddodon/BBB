@@ -178,6 +178,7 @@ socketconnection.sockets.on('connection', function (socket) {
                             return false;
                     }
 
+                    field.getNode(bomb.x, bomb.y).containedEntity = null;
                     for(var i = bomb.x; i >= bomb.x-player.blastRadius; i--) {
                         if(!blastTo(i, bomb.y))
                             break;
