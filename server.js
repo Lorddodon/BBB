@@ -62,6 +62,7 @@ function startServer(port) {
         player.currentBombCount = 0;
         player.maxBombCount = 1;
         player.blastRadius = 1;
+        player.isAlive = true;
         players[clientNumber] = player;
         socket.emit('identity',{entity:player});
         broadCast('players',{players:players});
@@ -81,6 +82,7 @@ function startServer(port) {
 
             function runTo(xDir, yDir, data) {
                 var player = players[data['id']];
+                if(player.isAlive) {
                 function movePlayer(xDir, yDir) {
                     if(field.getNode(player.x,player.y).containedEntity && field.getNode(player.x,player.y).containedEntity.type != 'bomb')
                         field.getNode(player.x,player.y).containedEntity = null;
@@ -103,6 +105,7 @@ function startServer(port) {
                         broadCast('delete_entities', {delete_array:[currentField.containedEntity]});
                         movePlayer(xDir, yDir);
                     }
+                }
             }
 
             socket.on('run_up',function(data) {
@@ -152,6 +155,8 @@ function startServer(port) {
                             if(currField) {
                                 if (currField.containedEntity) {
                                     if(currField.containedEntity.type == 'player') {
+                                        currField.containedEntity.isAlive = false;
+                                        broadCast('update',{entity:player});
                                         died_players.push(currField.containedEntity);
                                         currField.containedEntity = null;
                                     }
