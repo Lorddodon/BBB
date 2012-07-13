@@ -153,22 +153,7 @@ function drawBomb(xpos, ypos){
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
-    }
-}
-
-function drawPowerup(xpos, ypos, type){
-    var index = ((type == 'powerup_bomb') ? 11 : 10);
-    var canvas, context, width, height, x = 0, y = 0, frameSize = 16;
-    var mul = 30;image = new Image();
-    image.src = "./powerups.png";
-    image.onload = function() {
-        width = image.width;
-        height = image.height;
-        canvas = document.getElementById("obstacles");
-        x = index*mul;
-        context = canvas.getContext("2d");
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
     }
 }
 
@@ -254,7 +239,7 @@ function removeBomb(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("bombs");
     context = canvas.getContext("2d");
-    context.clearRect(xpos*mul+4, ypos*mul+4, 30, 30);
+    context.clearRect(xpos*mul, ypos*mul, 30, 30);
 }
 
 function drawBackgroundGrid() {
@@ -284,24 +269,23 @@ function removeObstacle(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("obstacles");
     context = canvas.getContext("2d");
-    context.clearRect(xpos*mul+4, ypos*mul+4, 30, 30);
+    context.clearRect(xpos*mul, ypos*mul, 30, 30);
 }
 
 function drawObstacles() {
-    var index = 35;
-    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
+    var index = 3;
+    var canvas, context, image, width, height, x = 0, y = 0, frameSize = 16;
     var mul = 30;
     image = new Image();
-    image.src = "./spritesheet.png";
+    image.src = "./powerups.png";
     image.onload = function() {
         function drawObstacle(xpos, ypos) {
             width = image.width;
             height = image.height;
             canvas = document.getElementById("obstacles");
-            y = (index-(index%numFrames))/numFrames*frameSize;
-            x = (index%numFrames)*frameSize;
+            x = index*mul;
             context = canvas.getContext("2d");
-            context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
+            context.drawImage(image, x, y, frameSize, frameSize, xpos*mul + 1, ypos*mul, mul, mul);
         }
         for(var i = 0; i < graph.height; i++) {
             for (var j = 0; j < graph.width; j++) {
@@ -312,6 +296,21 @@ function drawObstacles() {
                 }
             }
         }
+    }
+}
+
+function drawPowerup(xpos, ypos, type){
+    var index = ((type == 'powerup_bomb') ? 11 : 10);
+    var canvas, context, width, height, x = 0, y = 0, frameSize = 16;
+    var mul = 30;image = new Image();
+    image.src = "./powerups.png";
+    image.onload = function() {
+        width = image.width;
+        height = image.height;
+        canvas = document.getElementById("obstacles");
+        x = index*mul;
+        context = canvas.getContext("2d");
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
     }
 }
 
