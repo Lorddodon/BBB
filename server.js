@@ -135,15 +135,32 @@ socketconnection.sockets.on('connection', function (socket) {
 
                     var objects = [];
                     var died_players = [];
+                    var powerups = [];
+                    var droprate = 0.2;
+
                     for(var i = bomb.x; i >= bomb.x-bombRadius; i--) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField ) {
-                            if( currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                            if (currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currField.containedEntity.type == 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+
+                                }
                                 break;
                             }
                         } else
@@ -153,11 +170,25 @@ socketconnection.sockets.on('connection', function (socket) {
                         var currField = field.getNode(i,bomb.y);
                         if(currField ) {
                             if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currField.containedEntity.type == 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(i, bomb.y, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+
+                                }
                                 break;
                             }
                         } else
@@ -167,11 +198,25 @@ socketconnection.sockets.on('connection', function (socket) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField) {
                             if (currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currField.containedEntity.type == 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+
+                                }
                                 break;
                             }
                         } else
@@ -180,12 +225,26 @@ socketconnection.sockets.on('connection', function (socket) {
                     for(var j = bomb.y; j <= bomb.y+bombRadius; j++) {
                         var currField = field.getNode(bomb.x,j);
                         if(currField) {
-                            if(currField.containedEntity) {
-                                if(currField.containedEntity.type == 'player')
+                            if (currField.containedEntity) {
+                                if(currField.containedEntity.type == 'player') {
                                     died_players.push(currField.containedEntity);
-                                else
-                                    objects.push(currField.containedEntity);
-                                currField.containedEntity = null;
+                                    currField.containedEntity = null;
+                                }
+                                else {
+                                    var currEntity = currField.containedEntity;
+                                    currField.containedEntity = null;
+                                    if(currField.containedEntity.type == 'obstacle' && Math.random() <= droprate) {
+                                        var powerup;
+                                        if(Math.random() <= 0.5)
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_bomb');
+                                        else
+                                            powerup = entityFactory.entity(bomb.x, j, -1, 'powerup_fire');
+                                        powerups.push(powerup);
+                                        currField.containedEntity = powerup;
+                                    }
+                                    objects.push(currEntity);
+
+                                }
                                 break;
                             }
                         } else
