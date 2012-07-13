@@ -98,7 +98,7 @@ socket.on('bomb_explode',function(data){
 socket.on('delete_entities',function(data){
     var delete_array = data.delete_array;
     for(var i = 0; i < delete_array.length; i++) {
-        if(delete_array[i].type === 'obstacle') {
+        if(delete_array[i].type === 'obstacle' || delete_array[i].type.indexOf('powerup') == 0) {
             removeObstacle(delete_array[i].x,delete_array[i].y);
         }
     }
@@ -111,6 +111,12 @@ socket.on('players_died',function(data){
         alert("Game over. Player "+ data[0].entity.id + "died.");
     console.log(data);
 });
+
+socket.on('powerups',function(data){
+    var powerups = data.powerups;
+    for(var i = 0; i < powerups.length; i++)
+        drawPowerup(powerups[i].x, powerups[i].y, powerups[i].type);
+})
 
 Mousetrap.bind('right', function() {
     socket.emit("run_right",{id:player.id})
@@ -149,6 +155,21 @@ function drawBomb(xpos, ypos){
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
+    }
+}
+
+function drawPowerup(xpos, ypos, type){
+    var index = ((type == 'powerup_bomb') ? 11 : 10);
+    var canvas, context, width, height, x = 0, y = 0, frameSize = 16;
+    var mul = 30;image = new Image();
+    image.src = "./powerups.png";
+    image.onload = function() {
+        width = image.width;
+        height = image.height;
+        canvas = document.getElementById("obstacles");
+        x = index*mul;
+        context = canvas.getContext("2d");
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
     }
 }
 
