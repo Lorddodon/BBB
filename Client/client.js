@@ -23,6 +23,7 @@ socket.on('graph', function(data){
 socket.on('identity', function(data){
     console.log('identity called')
     player = data['entity'];
+    drawPicture(0,player.x,player.y,tmpx,tmpy, "player1");
     console.log(player);
 });
 
