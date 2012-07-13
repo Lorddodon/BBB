@@ -14,17 +14,13 @@ var graph = undefined;
 var bombs = [];
 
 socket.on('graph', function(data){
-    console.log('graph received..');
     graph = data['graph'];
     drawBackgroundGrid();
     drawObstacles();
 });
 
 socket.on('identity', function(data){
-    console.log('identity called')
     player = data['entity'];
-
-    console.log(player);
 });
 
 socket.on('players', function(data){
@@ -38,12 +34,10 @@ socket.on('update',function(data){
 
     otherplayer[data['entity'].id] = data['entity'];
     drawPlayers();
-    console.log(player.x);
 
 });
 
 socket.on('show_flame',function(data){
-    console.log('show flame called....');
     var id = data.bomb.id;
     var index = -1;
     for (var i = 0; i < bombs.length; i++) {
@@ -55,7 +49,6 @@ socket.on('show_flame',function(data){
     if ( index > 0) {
         var bomb = bombs[index];
     }
-    console.log('drawing flame');
     drawFlame(data.bomb.x,data.bomb.y);
 });
 
