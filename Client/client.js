@@ -35,16 +35,8 @@ socket.on('players', function(data){
 });
 
 socket.on('update',function(data){
-    if(player.id == data.entity.id){
-        console.log('got current player id '+data['entity'].id);
 
-        player = data['entity'];
-        otherplayer[data['entity'].id] = data['entity'];
-    }else{
-
-        otherplayer[data['entity'].id] = data['entity'];
-
-    }
+    otherplayer[data['entity'].id] = data['entity'];
     drawPlayers();
     console.log(player.x);
 
@@ -261,7 +253,7 @@ function drawBackgroundGrid() {
             context.stroke();
         }
     }
-    drawPlayers();
+
 }
 
 function removeObstacle(xpos, ypos) {
@@ -356,9 +348,10 @@ function drawPlayers(){
             x = (indextemp%numFrames)*frameSize;
 
 
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
+        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
     }
         for(var i=0;otherplayer.length>i;i++){
+            if(otherplayer[i].isAlive)
             drawPlayer(otherplayer[i].x,otherplayer[i].y,otherplayer[i].id);
         }
 }
