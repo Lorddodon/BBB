@@ -13,6 +13,7 @@ var socketio = require('socket.io');
 var express = require('express');
 var utils = require('util');
 var generator = require('./graph/Generator');
+var fieldSize = 11;
 
 finalBombCount = 6;
 finalBlastRadius = 4;
@@ -21,7 +22,7 @@ bombId = 0;
 bombs = [];
 
 
-var field = require('./graph/Field').Field(11,11);
+var field = require('./graph/Field').Field(fieldSize,fieldSize);
 field.connect();
 generator.generate(field, 25);
 
@@ -76,7 +77,6 @@ socketconnection.sockets.on('connection', function (socket) {
             case 3 : placePlayer(0, field.height - 1, socket); break;
             default : return;
         }
-        console.log("Nach switch");
         socket.emit('graph',{graph:field});
         clients[clientNumber++] = socket;
 

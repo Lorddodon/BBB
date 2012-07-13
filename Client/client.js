@@ -29,7 +29,6 @@ socket.on('identity', function(data){
 
 socket.on('players', function(data){
    data.players;
-
 });
 
 socket.on('update',function(data){
@@ -104,7 +103,7 @@ socket.on('delete_entities',function(data){
 });
 
 socket.on('players_died',function(data){
-    if(data.players.length == 2)
+    if(data.players.length == otherplayer.length)
         alert("Draw");
     else
         alert("Game over. Player "+ data.players[0].id + " died.",{left:30, top:20});
