@@ -4,6 +4,10 @@
  * Date: 11.07.12
  * Time: 11:43
  */
+
+startServer(8000);
+
+function startServer(port) {
 var http = require('http');
 var socketio = require('socket.io');
 var express = require('express');
@@ -26,7 +30,7 @@ var playerCount = 0;
 
 var app = express.createServer();
 app.use(express.static(__dirname));
-app.listen(8000);
+app.listen(port);
 
 var socketconnection = socketio.listen(app);
 
@@ -115,8 +119,8 @@ socketconnection.sockets.on('connection', function (socket) {
                 bombs.push(bomb.id);
                 broadCast('bomb_placed',{bomb:bomb});
                 setTimeout(function(){
-                    broadCast('show_flame',{id:bomb.id});
-                },2500);
+                    broadCast('show_flame',{bomb:bomb});
+                },2000);
                 setTimeout(function(){
                     /*TODO: prüfe welche objekte gelöscht werden müssen*/
                     var bombIndex = -1;
@@ -190,13 +194,18 @@ socketconnection.sockets.on('connection', function (socket) {
 
                     player.currentBombCount--;
                     broadCast('bomb_explode',{bomb:bomb});
-                    broadCast('players_died',{players:died_players});
+                    if(died_players.length > 0)
+                        broadCast('players_died',{players:died_players});
                     broadCast('delete_entities',{delete_array:objects});
-                },3000);
+                },2500);
             }
         });
     } else {
         console.log('Game full..');
     }
 });
+
+}
+
+module.exports.startServer = startServer;
 

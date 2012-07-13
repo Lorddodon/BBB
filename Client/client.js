@@ -25,7 +25,7 @@ socket.on('identity', function(data){
     console.log('identity called')
     player = data['entity'];
     console.log(player);
-})
+});
 
 socket.on('update',function(data){
     console.log(player);
@@ -56,8 +56,20 @@ socket.on('update',function(data){
 });
 
 socket.on('show_flame',function(data){
-    console.log(data);
-    var id = data.id;
+    console.log('show flame called....');
+    var id = data.bomb.id;
+    var index = -1;
+    for (var i = 0; i < bombs.length; i++) {
+        if(bombs[i].id == id) {
+            index = i;
+            break;
+        }
+    }
+    if ( index > 0) {
+        var bomb = bombs[index];
+    }
+    console.log('drawing flame');
+    drawFlame(data.bomb.x,data.bomb.y);
 });
 
 socket.on('bomb_placed',function(data){
@@ -83,7 +95,7 @@ socket.on('bomb_explode',function(data){
     if(index > -1)
         remove(bombs,index);
     removeBomb(bomb.x,bomb.y);
-
+    clearFlameLayer();
 });
 
 socket.on('delete_entities',function(data){
@@ -137,6 +149,83 @@ function drawBomb(xpos, ypos){
         context = canvas.getContext("2d");
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
     }
+}
+
+function clearFlameLayer() {
+    var canvas, context;
+    canvas = document.getElementById('flames');
+    context = canvas.getContext('2d');
+    context.clearRect(0,0,270,270);
+}
+
+function drawFlame(xpos, ypos) {
+    var canvas, context;
+    var mul = 30;
+    canvas = document.getElementById("flames");
+    context = canvas.getContext("2d");
+    clearFlameLayer();
+    context.fillStyle = '#ff0000';
+    context.fillRect(xpos*mul,ypos*mul,30,30);
+    var count = 0;
+    for (var i = xpos+1; i <= xpos+3; i++) {
+        if(graph.nodes[ypos*graph.height+i]) {
+            if(count < 1) {
+                if(graph.nodes[ypos*graph.height+i].containedEntity) {
+                    graph.nodes[ypos*graph.height+i].containedEntity = null;
+                    count++;
+                }
+                context.fillStyle = '#ff0000';
+                context.fillRect(i*mul,ypos*mul,30,30);
+            }
+        } else
+            break;
+    }
+
+    count = 0;
+    for (var i = xpos-1; i >= xpos-3; i--) {
+        if(graph.nodes[ypos*graph.height+i]) {
+            if(count < 1) {
+                if(graph.nodes[ypos*graph.height+i].containedEntity) {
+                    graph.nodes[ypos*graph.height+i].containedEntity = null;
+                    count++;
+                }
+            context.fillStyle = '#ff0000';
+            context.fillRect(i*mul,ypos*mul,30,30);
+            }
+        } else
+            break;
+    }
+
+    count = 0;
+    for (var i = ypos+1; i <= ypos+3; i++) {
+        if(graph.nodes[i*graph.height+xpos]) {
+            if(count < 1) {
+                if(graph.nodes[i*graph.height+xpos].containedEntity) {
+                    graph.nodes[i*graph.height+xpos].containedEntity = null;
+                    count++;
+                }
+            context.fillStyle = '#ff0000';
+            context.fillRect(xpos*mul,i*mul,30,30);
+            }
+        } else
+            break;
+    }
+
+    count = 0;
+    for (var i = ypos-1; i >= ypos-3; i--) {
+        if(graph.nodes[i*graph.height+xpos]) {
+            if(count < 1) {
+                if(graph.nodes[i*graph.height+xpos].containedEntity) {
+                    graph.nodes[i*graph.height+xpos].containedEntity = null;
+                    count++;
+                }
+            context.fillStyle = '#ff0000';
+            context.fillRect(xpos*mul,i*mul,30,30);
+            }
+        } else
+            break;
+    }
+
 }
 
 function removeBomb(xpos, ypos) {
@@ -223,3 +312,12 @@ function drawPicture(index,xpos,ypos,xposold,yposold)
     }
 }
 
+function drawLoop() {
+    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
+    var mul = 30;
+    image = new Image();
+    image.src = "./spritesheet.png";
+    image.onload = function () {
+
+    };
+}

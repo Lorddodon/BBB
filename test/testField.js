@@ -7,7 +7,7 @@
  */
 var assert = require('assert');
 var fieldFactory = require('../graph/Field');
-
+createTest();
 function createTest() {
     var field = fieldFactory.Field(9,9);
     assert.equal(field.width, 9, "NOT");

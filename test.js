@@ -9,7 +9,7 @@ http.createServer(function (req, res) {
     setTimeout(function () {
         sys.puts('Hello called');
         res.writeHead(200, {'Content-Type':'text/plain'});
-        res.end("test");
+        res.end("startServer");
     }, 2000);
 }).listen(8000);
 
