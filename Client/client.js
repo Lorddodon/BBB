@@ -97,7 +97,7 @@ socket.on('players_died',function(data){
         }
     }
     if(alive == 1)
-        alert("Game over. Player " + otherplayer[aliveIndex].id + "wins!");
+        alert("Game over. Player " + otherplayer[aliveIndex].id + " wins!");
     if(alive == 0)
         alert("Draw!");
 });
