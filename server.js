@@ -8,6 +8,7 @@
 startServer(8000);
 
 function startServer(port) {
+    require('./ejs/ejs');
     var http = require('http');
     var socketio = require('socket.io');
     var express = require('express');
@@ -47,6 +48,8 @@ function startServer(port) {
 
     app.get('/start', function(req, res){
         /*TODO: fürs erste sollte es reichen das man ein spiel eröffnet und die spielen dort zuweist..*/
+        /*var template = new EJS({url: '/Client/client.html'});
+        var html = template.render(field);*/
         res.sendfile(__dirname + '/Client/Client.html');
     });
 

@@ -163,66 +163,42 @@ function drawFlame(xpos, ypos) {
     clearFlameLayer();
     context.fillStyle = '#ff0000';
     context.fillRect(xpos*mul,ypos*mul,30,30);
-    var count = 0;
-    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius; i++) {
-        if(graph.nodes[ypos*graph.height+i]) {
+
+    function drawFlameTo(index, xFire, yFire) {
+        if(graph.nodes[index]) {
             if(count < 1) {
-                if(graph.nodes[ypos*graph.height+i].containedEntity) {
-                    graph.nodes[ypos*graph.height+i].containedEntity = null;
+                if(graph.nodes[index].containedEntity) {
+                    graph.nodes[index].containedEntity = null;
                     count++;
                 }
                 context.fillStyle = '#ff0000';
-                context.fillRect(i*mul,ypos*mul,30,30);
+                context.fillRect(xFire,yFire,30,30);
             }
+            return true;
         } else
-            break;
+            return false;
     }
 
+    var count = 0;
+    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius; i++) {
+        if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul))
+            break;
+    }
     count = 0;
     for (var i = xpos-1; i >= xpos-otherplayer[player.id].blastRadius; i--) {
-        if(graph.nodes[ypos*graph.height+i]) {
-            if(count < 1) {
-                if(graph.nodes[ypos*graph.height+i].containedEntity) {
-                    graph.nodes[ypos*graph.height+i].containedEntity = null;
-                    count++;
-                }
-            context.fillStyle = '#ff0000';
-            context.fillRect(i*mul,ypos*mul,30,30);
-            }
-        } else
+        if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul))
             break;
     }
-
     count = 0;
     for (var i = ypos+1; i <= ypos+otherplayer[player.id].blastRadius; i++) {
-        if(graph.nodes[i*graph.height+xpos]) {
-            if(count < 1) {
-                if(graph.nodes[i*graph.height+xpos].containedEntity) {
-                    graph.nodes[i*graph.height+xpos].containedEntity = null;
-                    count++;
-                }
-            context.fillStyle = '#ff0000';
-            context.fillRect(xpos*mul,i*mul,30,30);
-            }
-        } else
+        if(!drawFlameTo(i*graph.height+xpos, xpos*mul, i*mul))
             break;
     }
-
     count = 0;
     for (var i = ypos-1; i >= ypos-otherplayer[player.id].blastRadius; i--) {
-        if(graph.nodes[i*graph.height+xpos]) {
-            if(count < 1) {
-                if(graph.nodes[i*graph.height+xpos].containedEntity) {
-                    graph.nodes[i*graph.height+xpos].containedEntity = null;
-                    count++;
-                }
-            context.fillStyle = '#ff0000';
-            context.fillRect(xpos*mul,i*mul,30,30);
-            }
-        } else
+        if(!drawFlameTo(i*graph.height+xpos, xpos*mul, i*mul))
             break;
     }
-
 }
 
 function removeBomb(xpos, ypos) {
