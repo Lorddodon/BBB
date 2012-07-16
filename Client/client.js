@@ -292,7 +292,7 @@ function drawObstacles() {
 
 function drawPowerup(xpos, ypos, type){
     var index = ((type == 'powerup_bomb') ? 11 : 10);
-    var canvas, context, width, height, x = 0, y = 0, frameSize = 16;
+    var canvas, image, context, width, height, x = 0, y = 0, frameSize = 16;
     var mul = 30;image = new Image();
     image.src = "./powerups.png";
     image.onload = function() {
