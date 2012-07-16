@@ -211,8 +211,50 @@ function startServer(port) {
                         broadCast('bomb_explode',{bomb:bomb});
                         if(died_players.length > 0)
                             broadCast('players_died',{players:died_players});
+
+
                         broadCast('delete_entities',{delete_array:objects});
                         broadCast('powerups', {powerups:powerups});
+
+                        /*Test if there are alive Player*/
+                        var deadPlayerCount = 0;
+                        for(var i = 0; i < players.length; i++) {
+                            if(!players[i].isAlive) {
+                                deadPlayerCount++;
+                            }
+                        }
+                        if(deadPlayerCount+1 == players.length || deadPlayerCount == players.length) {
+                            /*Game over restart new one*/
+                            broadCast('game_over');
+                            field =  require('./graph/Field').Field(fieldSize,fieldSize);
+                            field.connect();
+                            generator.generate(field, obstaclesToPlace);
+
+                            function resetPlayerState(id, xpos, ypos) {
+                                players[id].x = xpos;
+                                players[id].y = ypos;
+                                players[id].isAlive = true;
+                                players[id].maxBombCount = 1;
+                                players[id].blastRadius = 1;
+                                field.getNode(xpos,ypos).containedEntity = players[id];
+                                clients[id].emit('identity', {entity:players[id]});
+                                clients[id].emit('graph',{graph:field});
+                            }
+
+                            /*reset player positions*/
+                            for(var playerIndex = 0; playerIndex < players.length; playerIndex++) {
+                                switch (playerIndex) {
+                                    case 0: resetPlayerState(players[playerIndex].id,0,0); break;
+                                    case 1: resetPlayerState(players[playerIndex].id,field.width - 1, field.height - 1); break;
+                                    case 2: resetPlayerState(players[playerIndex].id,field.width - 1, 0); break;
+                                    case 3: resetPlayerState(players[playerIndex].id,0, field.height - 1); break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                            broadCast('players',{players:players});
+                        }
                     },2500);
                 }
             });

@@ -16,6 +16,7 @@ var bombs = [];
 socket.on('graph', function(data){
     graph = data['graph'];
     drawBackgroundGrid();
+    clearObstacleLayer();
     drawObstacles();
 });
 
@@ -236,6 +237,7 @@ function drawBackgroundGrid() {
     var canvas, context;
     canvas = document.getElementById("background");
     context = canvas.getContext("2d");
+    context.clearRect(0,0,canvas.width,canvas.height);
     var fieldAspect = 30;
     for(var i = 0; i <= graph.width*fieldAspect; i+=fieldAspect) {
             context.moveTo(i,0);
@@ -253,6 +255,13 @@ function drawBackgroundGrid() {
         }
     }
 
+}
+
+function clearObstacleLayer() {
+    var canvas, context;
+    canvas = document.getElementById("obstacles");
+    context = canvas.getContext("2d");
+    context.clearRect(0,0,canvas.width,canvas.height);
 }
 
 function removeObstacle(xpos, ypos) {
