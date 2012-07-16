@@ -16,6 +16,7 @@ var bombs = [];
 socket.on('graph', function(data){
     graph = data['graph'];
     drawBackgroundGrid();
+    clearObstacleLayer();
     drawObstacles();
 });
 
@@ -96,7 +97,7 @@ socket.on('players_died',function(data){
         }
     }
     if(alive == 1)
-        alert("Game over. Player " + otherplayer[aliveIndex].id + "wins!");
+        alert("Game over. Player " + otherplayer[aliveIndex].id + " wins!");
     if(alive == 0)
         alert("Draw!");
 });
@@ -143,7 +144,6 @@ function drawBomb(xpos, ypos){
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
-        context.textAlign = 'center';
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
     }
 }
@@ -152,7 +152,6 @@ function clearFlameLayer() {
     var canvas, context;
     canvas = document.getElementById('flames');
     context = canvas.getContext('2d');
-    context.textAlign = 'center';
     context.clearRect(0,0,graph.width * 30,graph.height * 30);
 }
 
@@ -161,70 +160,45 @@ function drawFlame(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("flames");
     context = canvas.getContext("2d");
-    context.textAlign = 'center';
     clearFlameLayer();
     context.fillStyle = '#ff0000';
     context.fillRect(xpos*mul,ypos*mul,30,30);
-    var count = 0;
-    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius; i++) {
-        if(graph.nodes[ypos*graph.height+i]) {
+
+    function drawFlameTo(index, xFire, yFire) {
+        if(graph.nodes[index]) {
             if(count < 1) {
-                if(graph.nodes[ypos*graph.height+i].containedEntity) {
-                    graph.nodes[ypos*graph.height+i].containedEntity = null;
+                if(graph.nodes[index].containedEntity) {
+                    graph.nodes[index].containedEntity = null;
                     count++;
                 }
                 context.fillStyle = '#ff0000';
-                context.fillRect(i*mul,ypos*mul,30,30);
+                context.fillRect(xFire,yFire,30,30);
             }
+            return true;
         } else
-            break;
+            return false;
     }
 
+    var count = 0;
+    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius; i++) {
+        if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul))
+            break;
+    }
     count = 0;
     for (var i = xpos-1; i >= xpos-otherplayer[player.id].blastRadius; i--) {
-        if(graph.nodes[ypos*graph.height+i]) {
-            if(count < 1) {
-                if(graph.nodes[ypos*graph.height+i].containedEntity) {
-                    graph.nodes[ypos*graph.height+i].containedEntity = null;
-                    count++;
-                }
-            context.fillStyle = '#ff0000';
-            context.fillRect(i*mul,ypos*mul,30,30);
-            }
-        } else
+        if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul))
             break;
     }
-
     count = 0;
     for (var i = ypos+1; i <= ypos+otherplayer[player.id].blastRadius; i++) {
-        if(graph.nodes[i*graph.height+xpos]) {
-            if(count < 1) {
-                if(graph.nodes[i*graph.height+xpos].containedEntity) {
-                    graph.nodes[i*graph.height+xpos].containedEntity = null;
-                    count++;
-                }
-            context.fillStyle = '#ff0000';
-            context.fillRect(xpos*mul,i*mul,30,30);
-            }
-        } else
+        if(!drawFlameTo(i*graph.height+xpos, xpos*mul, i*mul))
             break;
     }
-
     count = 0;
     for (var i = ypos-1; i >= ypos-otherplayer[player.id].blastRadius; i--) {
-        if(graph.nodes[i*graph.height+xpos]) {
-            if(count < 1) {
-                if(graph.nodes[i*graph.height+xpos].containedEntity) {
-                    graph.nodes[i*graph.height+xpos].containedEntity = null;
-                    count++;
-                }
-            context.fillStyle = '#ff0000';
-            context.fillRect(xpos*mul,i*mul,30,30);
-            }
-        } else
+        if(!drawFlameTo(i*graph.height+xpos, xpos*mul, i*mul))
             break;
     }
-
 }
 
 function removeBomb(xpos, ypos) {
@@ -232,7 +206,6 @@ function removeBomb(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("bombs");
     context = canvas.getContext("2d");
-    context.textAlign = 'center';
     context.clearRect(xpos*mul, ypos*mul, 30, 30);
 }
 
@@ -240,7 +213,7 @@ function drawBackgroundGrid() {
     var canvas, context;
     canvas = document.getElementById("background");
     context = canvas.getContext("2d");
-    context.textAlign = 'center';
+    context.clearRect(0,0,canvas.width,canvas.height);
     var fieldAspect = 30;
     for(var i = 0; i <= graph.width*fieldAspect; i+=fieldAspect) {
             context.moveTo(i,0);
@@ -260,12 +233,18 @@ function drawBackgroundGrid() {
 
 }
 
+function clearObstacleLayer() {
+    var canvas, context;
+    canvas = document.getElementById("obstacles");
+    context = canvas.getContext("2d");
+    context.clearRect(0,0,canvas.width,canvas.height);
+}
+
 function removeObstacle(xpos, ypos) {
     var canvas, context;
     var mul = 30;
     canvas = document.getElementById("obstacles");
     context = canvas.getContext("2d");
-    context.textAlign = 'center';
     context.clearRect(xpos*mul, ypos*mul, 30, 30);
 }
 
@@ -282,7 +261,6 @@ function drawObstacles() {
             canvas = document.getElementById("obstacles");
             x = index*mul;
             context = canvas.getContext("2d");
-            context.textAlign = 'center';
             context.drawImage(image, x, y, frameSize, frameSize, xpos*mul + 1, ypos*mul, mul, mul);
         }
         for(var i = 0; i < graph.height; i++) {
@@ -308,7 +286,6 @@ function drawPowerup(xpos, ypos, type){
         canvas = document.getElementById("obstacles");
         x = index*mul;
         context = canvas.getContext("2d");
-        context.textAlign = 'center';
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
     }
 }
@@ -326,7 +303,6 @@ function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
-        context.textAlign = 'center';
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
     }
@@ -341,7 +317,6 @@ function drawPlayers(){
     image.onload = function() {
         canvas = document.getElementById('players');
         context = canvas.getContext("2d");
-        context.textAlign = 'center';
         context.clearRect(0, 0, canvas.width, canvas.height);
         function drawPlayer(xpos,ypos,index){
             var indextemp;
