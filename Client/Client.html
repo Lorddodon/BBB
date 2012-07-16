@@ -10,14 +10,49 @@
 <head>
     <title>BigBadBomber</title>
 </head>
-<body>
-<h1>Welcome to BigBadBomber</h1>
-<canvas id="background" width="330" height="330" style="position: absolute; left: 200; top: 200;"></canvas>
-<canvas id="obstacles" width="330" height="330" style="position: absolute; left: 200; top: 200;"></canvas>
-<canvas id="bombs" width="330" height="330" style="position: absolute; left: 200; top: 200;"></canvas>
-<canvas id="players" width="330" height="330" style="position: absolute; left: 200; top: 200;"></canvas>
-<canvas id="flames" width="330" height="330" style="position: absolute; left: 200; top: 200;"></canvas>
+<body style="overflow:hidden">
+
+
+<canvas id="background" style="position: absolute; "  ></canvas>
+<canvas id="obstacles"  style="position: absolute; "  ></canvas>
+<canvas id="bombs"  style="position: absolute; " ></canvas>
+<canvas id="players"  style="position: absolute; "  ></canvas>
+<canvas id="flames" style="position: absolute; " ></canvas>
+
+
+<script>
+    window.onload = window.onresize = function() {
+        var canvasOb = document.getElementById('obstacles');
+
+        canvasOb.height = window.innerHeight;
+        canvasOb.width = window.innerWidth;
+
+        var canvasBa = document.getElementById('background');
+
+        canvasBa.height = window.innerHeight;
+        canvasBa.width = window.innerWidth;
+
+        var canvasBo = document.getElementById('bombs');
+
+        canvasBo.height = window.innerHeight;
+        canvasBo.width = window.innerWidth;
+
+        var canvasPl = document.getElementById('players');
+
+        canvasPl.height = window.innerHeight;
+        canvasPl.width = window.innerWidth;
+
+        var canvasFl = document.getElementById('flames');
+
+        canvasFl.height = window.innerHeight;
+        canvasFl.width = window.innerWidth;
+
+
+    }
+</script>
+
 <script type="text/javascript" src="/Client/client.js"></script>
 
 </body>
 </html>
+

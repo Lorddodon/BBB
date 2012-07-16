@@ -143,6 +143,7 @@ function drawBomb(xpos, ypos){
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
+        context.textAlign = 'center';
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
     }
 }
@@ -151,6 +152,7 @@ function clearFlameLayer() {
     var canvas, context;
     canvas = document.getElementById('flames');
     context = canvas.getContext('2d');
+    context.textAlign = 'center';
     context.clearRect(0,0,graph.width * 30,graph.height * 30);
 }
 
@@ -159,6 +161,7 @@ function drawFlame(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("flames");
     context = canvas.getContext("2d");
+    context.textAlign = 'center';
     clearFlameLayer();
     context.fillStyle = '#ff0000';
     context.fillRect(xpos*mul,ypos*mul,30,30);
@@ -229,6 +232,7 @@ function removeBomb(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("bombs");
     context = canvas.getContext("2d");
+    context.textAlign = 'center';
     context.clearRect(xpos*mul, ypos*mul, 30, 30);
 }
 
@@ -236,6 +240,7 @@ function drawBackgroundGrid() {
     var canvas, context;
     canvas = document.getElementById("background");
     context = canvas.getContext("2d");
+    context.textAlign = 'center';
     var fieldAspect = 30;
     for(var i = 0; i <= graph.width*fieldAspect; i+=fieldAspect) {
             context.moveTo(i,0);
@@ -260,6 +265,7 @@ function removeObstacle(xpos, ypos) {
     var mul = 30;
     canvas = document.getElementById("obstacles");
     context = canvas.getContext("2d");
+    context.textAlign = 'center';
     context.clearRect(xpos*mul, ypos*mul, 30, 30);
 }
 
@@ -276,6 +282,7 @@ function drawObstacles() {
             canvas = document.getElementById("obstacles");
             x = index*mul;
             context = canvas.getContext("2d");
+            context.textAlign = 'center';
             context.drawImage(image, x, y, frameSize, frameSize, xpos*mul + 1, ypos*mul, mul, mul);
         }
         for(var i = 0; i < graph.height; i++) {
@@ -301,6 +308,7 @@ function drawPowerup(xpos, ypos, type){
         canvas = document.getElementById("obstacles");
         x = index*mul;
         context = canvas.getContext("2d");
+        context.textAlign = 'center';
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
     }
 }
@@ -318,6 +326,7 @@ function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
         y = (index-(index%numFrames))/numFrames*frameSize;
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
+        context.textAlign = 'center';
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
     }
@@ -332,6 +341,7 @@ function drawPlayers(){
     image.onload = function() {
         canvas = document.getElementById('players');
         context = canvas.getContext("2d");
+        context.textAlign = 'center';
         context.clearRect(0, 0, canvas.width, canvas.height);
         function drawPlayer(xpos,ypos,index){
             var indextemp;
@@ -366,3 +376,12 @@ function drawLoop() {
 
     };
 }
+
+
+    window.onresize = function(){
+        drawPlayers();
+        drawObstacles();
+        drawBackgroundGrid();
+
+    };
+

@@ -1,6 +1,15 @@
 canvas {
-    display: block;
 
     border:1px solid black;
-
+    padding-left: 0;
+    padding-right: 0;
+    display: block;
     }
+
+
+body{
+    margin-left: auto;
+    margin-right: auto;
+    padding:0px;
+
+}
