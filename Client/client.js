@@ -25,17 +25,13 @@ socket.on('identity', function(data){
 });
 
 socket.on('players', function(data){
-
     otherplayer=data.players;
     drawPlayers();
-
 });
 
 socket.on('update',function(data){
-
     otherplayer[data['entity'].id] = data['entity'];
     drawPlayers();
-
 });
 
 socket.on('show_flame',function(data){
@@ -110,26 +106,22 @@ socket.on('powerups',function(data){
 
 Mousetrap.bind('right', function() {
     socket.emit("run_right",{id:player.id})
-
-
 });
 
 Mousetrap.bind('left', function() {
     socket.emit("run_left",{id:player.id})
-
-
 });
+
 Mousetrap.bind('up', function() {
     socket.emit("run_up",{id:player.id})
-
 });
+
 Mousetrap.bind('down', function() {
     socket.emit("run_down",{id:player.id})
-
 });
+
 Mousetrap.bind('space', function() {
     socket.emit("drop_bomb",{id:player.id})
-
 });
 
 function drawBomb(xpos, ypos){
@@ -211,10 +203,10 @@ function removeBomb(xpos, ypos) {
 
 function drawBackgroundGrid() {
     var canvas, context;
+    var fieldAspect = 30;
     canvas = document.getElementById("background");
     context = canvas.getContext("2d");
     context.clearRect(0,0,canvas.width,canvas.height);
-    var fieldAspect = 30;
     for(var i = 0; i <= graph.width*fieldAspect; i+=fieldAspect) {
             context.moveTo(i,0);
             context.lineTo(i,graph.width*fieldAspect);
@@ -290,24 +282,6 @@ function drawPowerup(xpos, ypos, type){
     }
 }
 
-function drawPicture(index,xpos,ypos,xposold,yposold, myCanvas)
-{
-    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
-    var mul = 30;
-    image = new Image();
-    image.src = "./spritesheet.png";
-    image.onload = function() {
-        width = image.width;
-        height = image.height;
-        canvas = document.getElementById("players");
-        y = (index-(index%numFrames))/numFrames*frameSize;
-        x = (index%numFrames)*frameSize;
-        context = canvas.getContext("2d");
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+4, ypos*mul+4, frameSize, frameSize);
-    }
-}
-
 function drawPlayers(){
     var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 30;
     var mul = 30;
@@ -335,8 +309,8 @@ function drawPlayers(){
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+3, ypos*mul+3, frameSize, frameSize);
     }
         for(var i=0;otherplayer.length>i;i++){
-            if(otherplayer[i].isAlive)
-            drawPlayer(otherplayer[i].x,otherplayer[i].y,otherplayer[i].id);
+            if(otherplayer[i] && otherplayer[i].isAlive)
+                drawPlayer(otherplayer[i].x,otherplayer[i].y,otherplayer[i].id);
         }
 }
 };

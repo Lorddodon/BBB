@@ -27,26 +27,36 @@
 
         canvasOb.height = window.innerHeight;
         canvasOb.width = window.innerWidth;
+        var context = canvasOb.getContext("2d");
+        context.translate((canvasOb.width - 330)/2,0);
 
         var canvasBa = document.getElementById('background');
 
         canvasBa.height = window.innerHeight;
         canvasBa.width = window.innerWidth;
+        context = canvasBa.getContext("2d");
+        context.translate((canvasBa.width - 330)/2,0);
 
         var canvasBo = document.getElementById('bombs');
 
         canvasBo.height = window.innerHeight;
         canvasBo.width = window.innerWidth;
+        context = canvasBo.getContext("2d");
+        context.translate((canvasBo.width - 330)/2,0);
 
         var canvasPl = document.getElementById('players');
 
         canvasPl.height = window.innerHeight;
         canvasPl.width = window.innerWidth;
+        context = canvasPl.getContext("2d");
+        context.translate((canvasPl.width - 330)/2,0);
 
         var canvasFl = document.getElementById('flames');
 
         canvasFl.height = window.innerHeight;
         canvasFl.width = window.innerWidth;
+        context = canvasFl.getContext("2d");
+        context.translate((canvasFl.width - 330)/2,0);
 
 
     }

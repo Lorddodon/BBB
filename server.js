@@ -8,7 +8,6 @@
 startServer(8000);
 
 function startServer(port) {
-    require('./ejs/ejs');
     var http = require('http');
     var socketio = require('socket.io');
     var express = require('express');
@@ -76,6 +75,7 @@ function startServer(port) {
 
     socketconnection.sockets.on('connection', function (socket) {
         if(clientNumber < maxPlayers) {
+            clients[clientNumber] = socket;
             switch(clientNumber) {
                 case 0 : placePlayer(0,0, socket); break;
                 case 1 : placePlayer(field.width - 1, field.height - 1, socket); break;
@@ -83,8 +83,8 @@ function startServer(port) {
                 case 3 : placePlayer(0, field.height - 1, socket); break;
                 default : return;
             }
+            clientNumber++;
             socket.emit('graph',{graph:field});
-            clients[clientNumber++] = socket;
 
             function runTo(xDir, yDir, data) {
                 var player = players[data['id']];
