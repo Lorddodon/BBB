@@ -189,22 +189,22 @@ function drawFlame(xpos, ypos) {
     }
 
     var count = 0;
-    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius; i++) {
+    for (var i = xpos+1; i <= xpos+otherplayer[player.id].blastRadius && i>=0 && i<graph.width; i++) {
         if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul))
             break;
     }
     count = 0;
-    for (var i = xpos-1; i >= xpos-otherplayer[player.id].blastRadius; i--) {
-        if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul))
+    for (var i = xpos-1; i >= xpos-otherplayer[player.id].blastRadius && i>=0 && i<graph.width; i--) {
+        if(!drawFlameTo(ypos*graph.height+i, i*mul, ypos*mul ) )
             break;
     }
     count = 0;
-    for (var i = ypos+1; i <= ypos+otherplayer[player.id].blastRadius; i++) {
+    for (var i = ypos+1; i <= ypos+otherplayer[player.id].blastRadius && i>=0; i++) {
         if(!drawFlameTo(i*graph.height+xpos, xpos*mul, i*mul))
             break;
     }
     count = 0;
-    for (var i = ypos-1; i >= ypos-otherplayer[player.id].blastRadius; i--) {
+    for (var i = ypos-1; i >= ypos-otherplayer[player.id].blastRadius && i>=0; i--) {
         if(!drawFlameTo(i*graph.height+xpos, xpos*mul, i*mul))
             break;
     }

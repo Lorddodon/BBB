@@ -14,11 +14,11 @@
 <body style="overflow:hidden">
 
 
-<canvas id="background" style="position: absolute; "  ></canvas>
-<canvas id="obstacles"  style="position: absolute; "  ></canvas>
-<canvas id="bombs"  style="position: absolute; " ></canvas>
-<canvas id="players"  style="position: absolute; "  ></canvas>
-<canvas id="flames" style="position: absolute; " ></canvas>
+<canvas id="background" style="position: absolute; "  horizontalCenter="0"   ></canvas>
+<canvas id="obstacles"  style="position: absolute; " horizontalCenter="0"   ></canvas>
+<canvas id="bombs"  style="position: absolute; " horizontalCenter="0"  ></canvas>
+<canvas id="players"  style="position: absolute; "  horizontalCenter="0"  ></canvas>
+<canvas id="flames" style="position: absolute; " horizontalCenter="0"  ></canvas>
 
 
 <script>
@@ -30,12 +30,15 @@
         var context = canvasOb.getContext("2d");
         context.translate((canvasOb.width - 330)/2,0);
 
+
+
         var canvasBa = document.getElementById('background');
 
         canvasBa.height = window.innerHeight;
         canvasBa.width = window.innerWidth;
         context = canvasBa.getContext("2d");
         context.translate((canvasBa.width - 330)/2,0);
+
 
         var canvasBo = document.getElementById('bombs');
 
@@ -44,6 +47,7 @@
         context = canvasBo.getContext("2d");
         context.translate((canvasBo.width - 330)/2,0);
 
+
         var canvasPl = document.getElementById('players');
 
         canvasPl.height = window.innerHeight;
@@ -51,12 +55,15 @@
         context = canvasPl.getContext("2d");
         context.translate((canvasPl.width - 330)/2,0);
 
+
         var canvasFl = document.getElementById('flames');
 
         canvasFl.height = window.innerHeight;
         canvasFl.width = window.innerWidth;
         context = canvasFl.getContext("2d");
         context.translate((canvasFl.width - 330)/2,0);
+
+        canvasFl.translate(window.innerHeight/2 - 330/2,0)
 
 
     }
