@@ -13,11 +13,16 @@ var graph = undefined;
 
 var bombs = [];
 
+function placeObjectInGraph(xPos, yPos, object) {
+    graph.nodes[yPos*graph.height+xPos].containedEntity = object;
+}
+
 socket.on('graph', function(data){
     graph = data['graph'];
+    setTimeout(drawLoop,0);
     drawBackgroundGrid();
-    clearObstacleLayer();
-    drawObstacles();
+    //clearObstacleLayer();
+    //drawObstacles();
 });
 
 socket.on('identity', function(data){
@@ -52,6 +57,8 @@ socket.on('show_flame',function(data){
 socket.on('bomb_placed',function(data){
     var bomb = data['bomb'];
     bombs.push(bomb);
+    placeObjectInGraph(bomb.x,bomb.y,bomb);
+    /*graph.nodes[bomb.y*graph.height+bomb.x].containedEntity = bomb;*/
     drawBomb(bomb.x,bomb.y);
 });
 
@@ -70,6 +77,7 @@ socket.on('bomb_explode',function(data){
     var bomb = data.bomb;
     if(index > -1)
         remove(bombs,index);
+    graph.nodes[bomb.y*graph.height+bomb.x].containedEntity = null;
     removeBomb(bomb.x,bomb.y);
     clearFlameLayer();
 });
@@ -78,6 +86,7 @@ socket.on('delete_entities',function(data){
     var delete_array = data.delete_array;
     for(var i = 0; i < delete_array.length; i++) {
         if(delete_array[i].type === 'obstacle' || delete_array[i].type.indexOf('powerup') == 0) {
+            graph.nodes[delete_array[i].y*graph.height+delete_array[i].x].containedEntity = null;
             removeObstacle(delete_array[i].x,delete_array[i].y);
         }
     }
@@ -100,28 +109,36 @@ socket.on('players_died',function(data){
 
 socket.on('powerups',function(data){
     var powerups = data.powerups;
-    for(var i = 0; i < powerups.length; i++)
+    for(var i = 0; i < powerups.length; i++) {
+        placeObjectInGraph(powerups[i].x,powerups[i].y,powerups[i]);
+        /*graph.nodes[powerups[i].y*graph.height+powerups[i].x].containedEntity = powerups[i];*/
         drawPowerup(powerups[i].x, powerups[i].y, powerups[i].type);
+    }
 })
 
 Mousetrap.bind('right', function() {
-    socket.emit("run_right",{id:player.id})
+    if(otherplayer.length > 0)
+        socket.emit("run_right",{id:player.id})
 });
 
 Mousetrap.bind('left', function() {
-    socket.emit("run_left",{id:player.id})
+    if(otherplayer.length > 0)
+        socket.emit("run_left",{id:player.id})
 });
 
 Mousetrap.bind('up', function() {
-    socket.emit("run_up",{id:player.id})
+    if(otherplayer.length > 0)
+        socket.emit("run_up",{id:player.id})
 });
 
 Mousetrap.bind('down', function() {
-    socket.emit("run_down",{id:player.id})
+    if(otherplayer.length > 0)
+        socket.emit("run_down",{id:player.id})
 });
 
 Mousetrap.bind('space', function() {
-    socket.emit("drop_bomb",{id:player.id})
+    if(otherplayer.length > 0)
+        socket.emit("drop_bomb",{id:player.id})
 });
 
 function drawBomb(xpos, ypos){
@@ -247,12 +264,13 @@ function drawObstacles() {
     image = new Image();
     image.src = "./powerups.png";
     image.onload = function() {
+        canvas = document.getElementById("obstacles");
+        context = canvas.getContext("2d");
+        clearObstacleLayer();
         function drawObstacle(xpos, ypos) {
             width = image.width;
             height = image.height;
-            canvas = document.getElementById("obstacles");
             x = index*mul;
-            context = canvas.getContext("2d");
             context.drawImage(image, x, y, frameSize, frameSize, xpos*mul + 1, ypos*mul, mul, mul);
         }
         for(var i = 0; i < graph.height; i++) {
@@ -260,6 +278,10 @@ function drawObstacles() {
                 if(graph.nodes[i*graph.height+j] && graph.nodes[i*graph.height+j].containedEntity) {
                     if(graph.nodes[i*graph.height+j].containedEntity.type === 'obstacle') {
                         drawObstacle(j,i);
+                    } else if (graph.nodes[i*graph.height+j].containedEntity.type === 'bomb') {
+                        drawBomb(j,i);
+                    } else if (graph.nodes[i*graph.height+j].containedEntity.type.indexOf('powerup') == 0){
+                        drawPowerup(j,i,graph.nodes[i*graph.height+j].containedEntity.type);
                     }
                 }
             }
@@ -281,6 +303,8 @@ function drawPowerup(xpos, ypos, type){
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
     }
 }
+
+
 
 function drawPlayers(){
     var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 30;
@@ -317,20 +341,16 @@ function drawPlayers(){
 
 
 function drawLoop() {
-    var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
-    var mul = 30;
-    image = new Image();
-    image.src = "./spritesheet.png";
-    image.onload = function () {
-
-    };
+    //drawBackgroundGrid();
+    drawObstacles();
+    drawPlayers();
+    setTimeout(drawLoop,60);
 }
 
 
-    window.onresize = function(){
-        drawPlayers();
-        drawObstacles();
-        drawBackgroundGrid();
-
-    };
+window.onresize = function(){
+    drawBackgroundGrid();
+    drawObstacles();
+    drawPlayers();
+};
 
