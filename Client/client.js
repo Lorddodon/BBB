@@ -117,36 +117,35 @@ socket.on('powerups',function(data){
 })
 
 Mousetrap.bind('right', function() {
-    if(otherplayer.length > 0)
         socket.emit("run_right",{id:player.id})
+    console.log('run right...');
 });
 
 Mousetrap.bind('left', function() {
-    if(otherplayer.length > 0)
         socket.emit("run_left",{id:player.id})
 });
 
 Mousetrap.bind('up', function() {
-    if(otherplayer.length > 0)
         socket.emit("run_up",{id:player.id})
 });
 
 Mousetrap.bind('down', function() {
-    if(otherplayer.length > 0)
         socket.emit("run_down",{id:player.id})
 });
 
 Mousetrap.bind('space', function() {
-    if(otherplayer.length > 0)
         socket.emit("drop_bomb",{id:player.id})
 });
 
 function drawBomb(xpos, ypos){
     var index = 51;
     var canvas, context, width, height, x = 0, y = 0, numFrames = 15, frameSize = 29;
-    var mul = 30;image = new Image();
-    image.src = "./spritesheet.png";
-    image.onload = function() {
+    var mul = 30;
+    if(!spriteSheet){
+        spriteSheet = new Image();
+        spriteSheet.src = "./powerups.png";
+    }
+    image = spriteSheet;
         width = image.width;
         height = image.height;
         canvas = document.getElementById("bombs");
@@ -154,7 +153,6 @@ function drawBomb(xpos, ypos){
         x = (index%numFrames)*frameSize;
         context = canvas.getContext("2d");
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul, ypos*mul, frameSize, frameSize);
-    }
 }
 
 function clearFlameLayer() {
@@ -268,9 +266,11 @@ function drawObstacles() {
     var index = 3;
     var canvas, context, image, width, height, x = 0, y = 0, frameSize = 16;
     var mul = 30;
-    image = new Image();
-    image.src = "./powerups.png";
-    image.onload = function() {
+    if(!powerupsSheet){
+        powerupsSheet = new Image();
+        powerupsSheet.src = "./powerups.png";
+    }
+    image = powerupsSheet;
         canvas = document.getElementById("obstacles");
         context = canvas.getContext("2d");
         clearObstacleLayer();
@@ -294,33 +294,38 @@ function drawObstacles() {
                 }
             }
         }
-    }
 }
+
+var powerupsSheet;
 
 function drawPowerup(xpos, ypos, type){
     var index = ((type == 'powerup_bomb') ? 11 : 10);
     var canvas, image, context, width, height, x = 0, y = 0, frameSize = 16;
-    var mul = 30;image = new Image();
-    image.src = "./powerups.png";
-    image.onload = function() {
+    var mul = 30;
+    if(!powerupsSheet){
+        powerupsSheet = new Image();
+        powerupsSheet.src = "./powerups.png";
+    }
+    image = powerupsSheet;
         width = image.width;
         height = image.height;
         canvas = document.getElementById("obstacles");
         x = index*mul;
         context = canvas.getContext("2d");
         context.drawImage(image, x, y, frameSize, frameSize, xpos*mul+7, ypos*mul+7, frameSize, frameSize);
-    }
 }
 
-
+var spriteSheet;
 
 function drawPlayers(){
     var canvas, context, image, width, height, x = 0, y = 0, numFrames = 15, frameSize = 30;
     var mul = 30;
 
-    image = new Image();
-    image.src = "./spritesheet.png";
-    image.onload = function() {
+    if(!spriteSheet) {
+        spriteSheet  = new Image();
+        spriteSheet.src = "./spritesheet.png";
+    }
+    image = spriteSheet;
         canvas = document.getElementById('players');
         context = canvas.getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -344,7 +349,6 @@ function drawPlayers(){
             if(otherplayer[i] && otherplayer[i].isAlive)
                 drawPlayer(otherplayer[i].x,otherplayer[i].y,otherplayer[i].id);
         }
-}
 };
 
 
