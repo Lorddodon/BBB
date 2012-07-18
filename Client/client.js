@@ -249,6 +249,13 @@ function clearObstacleLayer() {
     context.clearRect(0,0,canvas.width,canvas.height);
 }
 
+function clearBombLayer() {
+    var canvas, context;
+    canvas = document.getElementById("bombs");
+    context = canvas.getContext("2d");
+    context.clearRect(0,0,canvas.width,canvas.height);
+}
+
 function removeObstacle(xpos, ypos) {
     var canvas, context;
     var mul = 30;
@@ -267,6 +274,7 @@ function drawObstacles() {
         canvas = document.getElementById("obstacles");
         context = canvas.getContext("2d");
         clearObstacleLayer();
+        clearBombLayer();
         function drawObstacle(xpos, ypos) {
             width = image.width;
             height = image.height;
